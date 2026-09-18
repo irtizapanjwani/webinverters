@@ -1,31 +1,12 @@
-import type { ComponentType } from "react";
-import BrandingGraphic from "./service-graphics/BrandingGraphic";
-import EcommerceGraphic from "./service-graphics/EcommerceGraphic";
-import MobileDevGraphic from "./service-graphics/MobileDevGraphic";
-import SeoGraphic from "./service-graphics/SeoGraphic";
-import SocialGraphic from "./service-graphics/SocialGraphic";
-import WebDevGraphic from "./service-graphics/WebDevGraphic";
-
 export type ServiceItem = {
-  /** Full name, as it appears in the footer's service list. */
   title: string;
-  /** The short form used in the list rail, where the full name would wrap. */
   shortTitle: string;
   description: string;
-  /** Capability detail. Four is the ceiling — beyond that the panel reads as a
-   *  spec sheet rather than a summary. */
   tags: string[];
-  Graphic: ComponentType;
+  image: string;
+  imageAlt: string;
 };
 
-/**
- * The six services Web Inventers actually delivers, per PRODUCT.md.
- *
- * SEO and Social Media Management are separate entries, not a combined
- * "SEO & Social" — that split matches the footer's service list and the
- * capabilities recorded in PRODUCT.md. Copy and tags are the project's own,
- * recovered from the previous services implementation rather than rewritten.
- */
 export const SERVICES: ServiceItem[] = [
   {
     title: "Web Design & Development",
@@ -33,7 +14,8 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Fast, scalable, beautifully engineered websites built to convert and built to last.",
     tags: ["Next.js & React", "Headless CMS", "Enterprise Performance", "Tailored Architecture"],
-    Graphic: WebDevGraphic,
+    image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80",
+    imageAlt: "Modern website design on a laptop screen",
   },
   {
     title: "Mobile App Development",
@@ -41,7 +23,8 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Native and cross-platform apps engineered for performance and a delightful experience.",
     tags: ["iOS & Android Native", "React Native & Flutter", "Offline Architecture", "Biometric Security"],
-    Graphic: MobileDevGraphic,
+    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80",
+    imageAlt: "Mobile app development on smartphone screens",
   },
   {
     title: "E-commerce Development",
@@ -49,7 +32,8 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Custom storefronts on Shopify, WooCommerce, and headless stacks that sell around the clock.",
     tags: ["Headless Commerce", "Custom Checkout Flows", "Payment Integration", "Inventory Sync"],
-    Graphic: EcommerceGraphic,
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
+    imageAlt: "E-commerce online shopping interface",
   },
   {
     title: "Branding",
@@ -57,7 +41,8 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Identity systems, logos, and visual languages that make businesses instantly recognizable.",
     tags: ["Visual Identity Systems", "Logo & Wordmark Design", "Brand Guidelines", "Motion Branding"],
-    Graphic: BrandingGraphic,
+    image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&q=80",
+    imageAlt: "Brand identity design materials and logo",
   },
   {
     title: "SEO",
@@ -65,7 +50,8 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Technical and content SEO strategies that get you found — and keep you found.",
     tags: ["Technical SEO Audits", "Content Strategy", "Keyword Research", "Core Web Vitals"],
-    Graphic: SeoGraphic,
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+    imageAlt: "SEO analytics dashboard with charts and metrics",
   },
   {
     title: "Social Media Management",
@@ -73,6 +59,7 @@ export const SERVICES: ServiceItem[] = [
     description:
       "Content, community, and campaigns that turn followers into customers.",
     tags: ["Content Calendars", "Multi-Platform Scheduling", "Community Management", "Performance Analytics"],
-    Graphic: SocialGraphic,
+    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80",
+    imageAlt: "Social media management on multiple platforms",
   },
 ];

@@ -1,21 +1,12 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { useId, useRef, useState } from "react";
 import { SERVICES } from "./serviceData";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/**
- * The services rail and its showcase.
- *
- * Built as a vertical tablist rather than a row of cards: the six services are
- * one instrument with six readings, and the panel is the readout. That also
- * buys the correct keyboard contract for free — arrow keys move between
- * services, Home/End jump to the ends, and activation follows focus, which is
- * exactly what hover does for a mouse. Hover is an accelerator here, never the
- * only way in.
- */
 export default function ServicesShowcase() {
   const [active, setActive] = useState(0);
   const reduce = useReducedMotion();
@@ -26,7 +17,6 @@ export default function ServicesShowcase() {
   const panelId = (i: number) => `${baseId}-service-panel-${i}`;
 
   const service = SERVICES[active];
-  const Graphic = service.Graphic;
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     const last = SERVICES.length - 1;
@@ -45,17 +35,16 @@ export default function ServicesShowcase() {
 
   const swap = reduce
     ? { duration: 0 }
-    : { duration: 0.55, ease: EASE };
+    : { duration: 0.5, ease: EASE };
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-start lg:gap-16">
-      {/* ---------- the rail ---------- */}
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] lg:items-start lg:gap-14">
+      {/* ---------- service list ---------- */}
       <div
         role="tablist"
         aria-orientation="vertical"
         aria-label="Services"
         onKeyDown={handleKeyDown}
-        className="border-t border-border"
       >
         {SERVICES.map((item, i) => {
           const isActive = i === active;
@@ -74,7 +63,7 @@ export default function ServicesShowcase() {
               onMouseEnter={() => setActive(i)}
               onFocus={() => setActive(i)}
               onClick={() => setActive(i)}
-              className="group relative flex w-full items-center justify-between gap-4 border-b border-border py-5 pr-2 pl-5 text-left sm:py-6"
+              className="group relative flex w-full items-center gap-4 border-b border-border py-5 pr-2 pl-6 text-left sm:py-6"
             >
               {isActive && (
                 <motion.span
@@ -86,7 +75,7 @@ export default function ServicesShowcase() {
               )}
 
               <span
-                className={`font-display text-[clamp(17px,2.1vw,24px)] leading-[1.25] font-semibold tracking-[-0.01em] transition-colors duration-300 ${
+                className={`font-manrope text-[clamp(18px,2.2vw,26px)] leading-[1.3] font-semibold tracking-[-0.01em] transition-colors duration-300 ${
                   isActive ? "text-accent" : "text-ink-dim group-hover:text-ink"
                 }`}
               >
@@ -97,11 +86,11 @@ export default function ServicesShowcase() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth={2.2}
+                strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 aria-hidden="true"
-                className={`size-4 shrink-0 transition-all duration-300 ${
+                className={`ml-auto size-4 shrink-0 transition-all duration-300 ${
                   isActive
                     ? "translate-x-0 text-accent opacity-100"
                     : "-translate-x-1 text-ink-faint opacity-0 group-hover:translate-x-0 group-hover:opacity-60"
@@ -115,57 +104,49 @@ export default function ServicesShowcase() {
         })}
       </div>
 
-      {/* ---------- the showcase ---------- */}
+      {/* ---------- showcase panel ---------- */}
       <div
         id={panelId(active)}
         role="tabpanel"
         aria-labelledby={tabId(active)}
         tabIndex={0}
-        className="relative min-h-[520px] overflow-hidden rounded-[28px] border border-border bg-bg-alt sm:min-h-[560px] lg:min-h-[620px]"
+        className="relative min-h-[480px] overflow-hidden rounded-[24px] border border-border bg-bg-alt sm:min-h-[540px] lg:min-h-[600px]"
       >
         <AnimatePresence initial={false}>
           <motion.div
             key={active}
-            initial={{ opacity: 0, scale: reduce ? 1 : 1.03 }}
+            initial={{ opacity: 0, scale: reduce ? 1 : 1.02 }}
             animate={{ opacity: 1, scale: 1 }}
-            /* Exit runs quicker than entry so the incoming reading leads and
-               the two never sit at half opacity together for long. */
             exit={{
               opacity: 0,
-              scale: reduce ? 1 : 0.985,
-              transition: reduce ? { duration: 0 } : { duration: 0.32, ease: EASE },
+              scale: reduce ? 1 : 0.98,
+              transition: reduce ? { duration: 0 } : { duration: 0.3, ease: EASE },
             }}
             transition={swap}
             className="absolute inset-0 flex flex-col"
           >
-            <div className="relative min-h-0 flex-1 p-4 sm:p-6">
-              <div className="flex h-full w-full items-center justify-center text-ink">
-                <Graphic />
+            {/* image area */}
+            <div className="relative min-h-0 flex-1 overflow-hidden p-5 sm:p-8">
+              <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[16px]">
+                <Image
+                  src={service.image}
+                  alt={service.imageAlt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 58vw"
+                  priority={active === 0}
+                />
               </div>
             </div>
 
-            {/* One surface, divided — not a second card inside the panel. The
-                hairline does the separating, as it does everywhere else. */}
-            <div className="border-t border-border px-6 py-7 sm:px-8 sm:py-8">
-              <h3 className="mb-2.5 font-display text-[19px] font-semibold tracking-[-0.01em] sm:text-[21px]">
+            {/* info area */}
+            <div className="border-t border-border px-6 py-6 sm:px-8 sm:py-7">
+              <h3 className="mb-2 font-manrope text-[19px] font-bold tracking-[-0.01em] sm:text-[21px]">
                 {service.title}
               </h3>
-              <p className="mb-5 max-w-[46ch] text-[15px] leading-[1.6] text-ink-dim">
+              <p className="max-w-[46ch] text-[15px] leading-[1.6] text-ink-dim">
                 {service.description}
               </p>
-              <ul className="flex flex-wrap gap-2">
-                {service.tags.map((tag) => (
-                  <li
-                    key={tag}
-                    /* 12.5px, not the 11.5px of the work-card chips: these are
-                       multi-word capability phrases people actually read, not
-                       one-word category labels glanced at. */
-                    className="rounded-full border border-border bg-black/[0.03] px-3 py-1 text-[12.5px] font-semibold text-ink-dim"
-                  >
-                    {tag}
-                  </li>
-                ))}
-              </ul>
             </div>
           </motion.div>
         </AnimatePresence>
