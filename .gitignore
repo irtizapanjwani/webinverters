@@ -42,3 +42,11 @@ next-env.d.ts
 
 # dev server log
 .next-dev.log
+.impeccable
+.opencode
+.gemini
+.cursor
+.codex
+.agents
+.agent
+.claude

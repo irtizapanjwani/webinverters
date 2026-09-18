@@ -2,7 +2,7 @@ const ICON_PROPS = {
   viewBox: "0 0 24 24",
   fill: "none",
   stroke: "currentColor",
-  strokeWidth: 1.7,
+  strokeWidth: 1.65,
   strokeLinecap: "round" as const,
   strokeLinejoin: "round" as const,
   className: "mb-3.5 size-5.5 text-accent-2",
@@ -63,7 +63,7 @@ const REASONS = [
     title: "Business-Focused Approach",
     desc: "Every decision is measured against the outcome it drives for your business.",
     icon: (
-      <svg {...ICON_PROPS} strokeWidth={1.7}>
+      <svg {...ICON_PROPS}>
         <circle cx="12" cy="12" r="8.5" />
         <circle cx="12" cy="12" r="4.5" />
         <circle cx="12" cy="12" r="0.8" fill="currentColor" />
@@ -88,13 +88,13 @@ const REASONS = [
 
 export default function WhyUs() {
   return (
-    <section className="bg-bg-alt py-18 lg:py-[140px]" id="about">
+    <section className="bg-bg-alt pt-14 pb-18 lg:pt-[104px] lg:pb-[140px]" id="about">
       <div className="mx-auto grid w-full max-w-[1400px] items-start gap-8 px-5 sm:px-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-        <div className="reveal max-w-[640px]">
-          <span className="mb-3.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
+        <div className="max-w-[640px]">
+          <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
             Why Web Inventers
           </span>
-          <h2 className="mb-4 font-display text-[clamp(28px,4vw,42px)] leading-[1.1] font-semibold tracking-[-0.02em]">
+          <h2 className="mb-5 font-display text-[clamp(28px,4vw,42px)] leading-[1.1] font-semibold tracking-[-0.02em]">
             A technology partner, not a template shop
           </h2>
           <p className="text-[17px] leading-[1.6] text-ink-dim">
@@ -104,14 +104,14 @@ export default function WhyUs() {
           </p>
         </div>
 
-        <div className="reveal grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {REASONS.map((reason) => (
             <div
               key={reason.title}
               className="rounded-[18px] border border-border bg-bg-alt p-6 transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-accent/40"
             >
               {reason.icon}
-              <h4 className="mb-1.5 text-[15.5px] font-bold">{reason.title}</h4>
+              <h3 className="mb-1.5 text-[15.5px] font-bold">{reason.title}</h3>
               <p className="text-[13.5px] leading-[1.55] text-ink-dim">
                 {reason.desc}
               </p>

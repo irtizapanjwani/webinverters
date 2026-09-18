@@ -1,20 +1,57 @@
 @import "tailwindcss";
 
+@layer base {
+  /* Keyboard focus, system-wide. Tailwind's preflight removes the browser's
+     default ring on several element types, so without this the site has no
+     visible focus at all. Outline (not box-shadow) because it follows each
+     element's own border-radius — pills stay pills, cards stay cards. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  /* Signal Blue only clears 3.3:1 on the spotlight panel; the lifted stop
+     reads cleanly there without changing the ring's shape or weight. */
+  [data-surface="dark"] :focus-visible {
+    outline-color: var(--color-accent-lift);
+  }
+
+  /* Browser surfaces we did not draw still belong to the palette. */
+  ::selection {
+    background: color-mix(in oklab, var(--color-accent) 20%, transparent);
+    color: var(--color-ink);
+  }
+
+  html {
+    accent-color: var(--color-accent);
+    caret-color: var(--color-accent);
+    scrollbar-color: var(--color-ink-faint) var(--color-bg-alt);
+  }
+
+  /* Long unbroken strings — pasted URLs, compound German nouns, an email
+     address in a narrow footer column — wrap instead of widening the page. */
+  body {
+    overflow-wrap: break-word;
+  }
+}
+
 @theme {
-  --color-bg: #05070c;
-  --color-bg-alt: #080b14;
-  --color-surface: #0e1424;
-  --color-surface-2: #141b2e;
+  --color-bg: #ffffff;
+  --color-bg-alt: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-surface-2: #eef1f7;
   --color-accent: #1b5af0;
-  --color-accent-2: #22d3ee;
-  --color-ink: #f4f6fb;
-  --color-ink-dim: #a3acc2;
-  --color-ink-faint: #6b7488;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-accent-lift: #3a68ee;
+  --color-accent-2: #0e7490;
+  --color-ink: #0b1120;
+  --color-ink-dim: #4a5568;
+  --color-ink-faint: #606b7d;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.14);
 
   --font-display: var(--font-space-grotesk), system-ui, sans-serif;
   --font-body: var(--font-plus-jakarta), system-ui, sans-serif;
+  --font-manrope: var(--font-manrope), sans-serif;
 
   --animate-spin-slow: spin-slow 40s linear infinite;
   --animate-spin-slow-reverse: spin-slow-reverse 56s linear infinite;
@@ -60,30 +97,6 @@
     transform: translateX(-50%);
   }
 }
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes type-erase {
-  0%,
-  4% {
-    width: 0;
-  }
-  42%,
-  60% {
-    width: calc(var(--ticker-len, 12) * 1ch);
-  }
-  100% {
-    width: 0;
-  }
-}
 @keyframes star-fall {
   0% {
     opacity: 1;
@@ -94,24 +107,7 @@
     transform: translate(var(--fall-x, 0px), var(--fall-y, 220px)) scale(0.35);
   }
 }
-@keyframes caret-blink {
-  0%,
-  45% {
-    border-color: var(--color-accent-2);
-  }
-  50%,
-  100% {
-    border-color: transparent;
-  }
-}
-
 @layer utilities {
-  .reveal {
-    animation: fade-up linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 34%;
-  }
-
   .grad-text {
     background: linear-gradient(100deg, var(--color-accent) 10%, var(--color-accent-2) 90%);
     -webkit-background-clip: text;
@@ -120,7 +116,7 @@
   }
 
   .dot-field {
-    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1.4px);
+    background-image: radial-gradient(circle, rgba(11, 17, 32, 0.09) 1px, transparent 1.4px);
     background-size: 34px 34px;
     -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
     mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
@@ -131,32 +127,137 @@
     animation-timeline: view();
   }
 
-  /* font lives on the box so its `ch` width matches the inner span's */
-  .type-ticker-box {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 12.5px;
+  /* Single source of truth for the orb's look, shared by the hero orb and the
+     entrance animation's travelling orb so the hand-off is seamless. */
+  .orb-surface {
+    background: radial-gradient(
+      circle at 34% 30%,
+      #dce8ff 0%,
+      #1b5af0 34%,
+      #122058 72%,
+      #05070c 100%
+    );
+    box-shadow:
+      0 0 90px 10px rgba(27, 90, 240, 0.45),
+      0 0 200px 60px rgba(27, 90, 240, 0.18);
   }
+}
 
-  .type-ticker {
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 2px solid;
-    animation:
-      type-erase 3.6s cubic-bezier(0.65, 0, 0.35, 1) both,
-      caret-blink 0.9s steps(1, start) infinite;
+/* ---------- Homepage entrance animation ---------- */
+/* The hero orb and copy are held back only while the intro overlay is running,
+   then transition into their normal (unchanged) resting state. */
+/* The copy eases in. The orb gets no transition on purpose: it is revealed at
+   the exact moment the travelling overlay orb lands on top of it at full
+   opacity, so an instant swap is invisible — a cross-fade here would dip and
+   read as the orb briefly vanishing. */
+[data-hero-reveal] {
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Failsafe, on all three rules below.
+   The intro is driven entirely by JS timers: the script sets data-hero-intro
+   on <html>, and these selectors hide the real hero until it removes the
+   attribute again at ~2.5s. If that script never gets there — a hydration
+   error, a failed chunk, framer-motion throwing — the attribute sticks and the
+   hero headline, CTAs and orb stay invisible permanently, behind an opaque
+   full-screen overlay. The page's most important content, gone, with no way
+   back.
+   These animations make the hidden state time-bounded in CSS instead of
+   JS-dependent: whatever happens to the script, the page restores itself at
+   3.6s. On the normal path the attribute is long gone before then and none of
+   this ever runs. */
+@keyframes hero-intro-failsafe {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-overlay-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.hero-intro {
+  animation: hero-overlay-failsafe 0.4s ease 3.6s both;
+}
+
+[data-hero-intro="running"] [data-hero-orb],
+[data-hero-intro="revealing"] [data-hero-orb] {
+  opacity: 0;
+  animation: hero-intro-failsafe 0.01s linear 3.6s both;
+}
+
+[data-hero-intro="running"] [data-hero-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: hero-intro-failsafe 0.5s ease 3.6s both;
+}
+
+/* ---------- Trust & Results: orb expansion turns the section Signal Blue ---------- */
+/* The white copy of the section, revealed inside the expanding circle. */
+.stats-white h2,
+.stats-white p,
+.stats-white em,
+.stats-white span {
+  color: #fff;
+}
+
+.stats-white .stats-card {
+  background-color: transparent;
+}
+
+.stats-white .stats-grid {
+  border-color: rgba(255, 255, 255, 0.35);
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+/* The duplicate must not replay the scroll reveal, or it would fade
+   independently of the copy underneath it. */
+.stats-white .reveal {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No intro at all: overlay never shows and the hero is never held back. */
+  .hero-intro {
+    display: none;
+  }
+  [data-stats-section] *,
+  [data-stats-section] {
+    transition: none !important;
+  }
+  [data-hero-intro] [data-hero-orb],
+  [data-hero-intro] [data-hero-reveal] {
+    opacity: 1;
+    transform: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
   .falling-star {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+
+  /* The ambient loops. Reduced motion does not mean an empty page: the rings,
+     the orb and the client strip all stay exactly where they are and keep
+     their full visual weight — they simply stop moving. Every one of these is
+     atmosphere, so nothing is lost by freezing it, and the marquee freezes
+     mid-strip rather than snapping to a start position. */
+  .animate-spin-slow,
+  .animate-spin-slow-reverse,
+  .animate-spin-slow-dashed,
+  .animate-pulse-orb,
+  .animate-float-node,
+  .animate-marquee {
+    animation-play-state: paused;
   }
 }

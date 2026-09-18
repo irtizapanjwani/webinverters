@@ -12,6 +12,16 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Tool-managed directories (see .gitignore) — not part of this app's
+    // source, and can contain large generated scripts we don't own.
+    ".impeccable/**",
+    ".opencode/**",
+    ".gemini/**",
+    ".cursor/**",
+    ".codex/**",
+    ".agents/**",
+    ".agent/**",
+    ".claude/**",
   ]),
 ]);
 

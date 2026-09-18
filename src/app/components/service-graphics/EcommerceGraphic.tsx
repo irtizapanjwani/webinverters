@@ -1,59 +1,75 @@
-"use client";
+/** Storefront grid feeding a checkout summary — the path from browse to paid. */
+export default function EcommerceGraphic() {
+  const bars = [26, 38, 32, 52, 46, 68];
 
-import CountUp from "../CountUp";
-import BrowserFrame from "../frames/BrowserFrame";
-
-const PRODUCTS = [
-  { color: "from-accent to-accent-2", price: "$68" },
-  { color: "from-accent-2 to-accent", price: "$124" },
-  { color: "from-[#8B5CF6] to-accent", price: "$42" },
-  { color: "from-accent to-[#22D3EE]", price: "$96" },
-];
-
-export default function EcommerceGraphic({ tiltDisabled = false }: { tiltDisabled?: boolean }) {
   return (
-    <BrowserFrame url="shop.yourbrand.com" tiltDisabled={tiltDisabled}>
-      <div className="mb-4 flex items-center justify-between">
-        <span className="font-display text-xs font-bold tracking-[0.14em] text-ink-faint uppercase">
-          Storefront
-        </span>
-        <div className="relative flex size-8 items-center justify-center rounded-lg border border-border bg-bg-alt">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.7}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4 text-ink-dim"
-          >
-            <circle cx="9" cy="20" r="1" />
-            <circle cx="18" cy="20" r="1" />
-            <path d="M3 4h2l2.4 11.5a2 2 0 0 0 2 1.5h7.2a2 2 0 0 0 2-1.6L20 8H6.2" />
-          </svg>
-          <span className="absolute -top-1.5 -right-1.5 flex size-4.5 items-center justify-center rounded-full bg-accent-2 text-[10px] font-bold text-[#04101f]">
-            <CountUp to={3} duration={1} />
-          </span>
-        </div>
-      </div>
+    <svg viewBox="0 0 400 300" className="h-full w-full" role="presentation">
+      {/* product grid */}
+      <g>
+        {[0, 1, 2, 3].map((i) => {
+          const x = 44 + (i % 2) * 88;
+          const y = 52 + Math.floor(i / 2) * 104;
+          return (
+            <g key={i}>
+              <rect x={x} y={y} width="76" height="92" rx="12" fill="var(--color-surface)" stroke="var(--color-border)" />
+              <rect x={x + 10} y={y + 10} width="56" height="44" rx="8" fill="var(--color-bg-alt)" />
+              <rect x={x + 10} y={y + 62} width="40" height="6" rx="3" fill="var(--color-border-strong)" />
+              <rect x={x + 10} y={y + 74} width="26" height="6" rx="3" fill="var(--color-accent)" />
+            </g>
+          );
+        })}
+      </g>
 
-      <div className="mb-4 grid grid-cols-4 gap-2">
-        {PRODUCTS.map((p, i) => (
-          <div key={i} className="overflow-hidden rounded-lg border border-border">
-            <div className={`aspect-square bg-gradient-to-br ${p.color} opacity-80`} />
-            <div className="bg-bg-alt px-1.5 py-1 text-center text-[10.5px] font-bold">
-              {p.price}
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* flow into checkout */}
+      <path
+        d="M216 150h22a10 10 0 0 1 10 10v0"
+        fill="none"
+        stroke="var(--color-border-strong)"
+        strokeDasharray="4 5"
+      />
 
-      <div className="flex items-center justify-between rounded-lg border border-border bg-bg-alt px-3 py-2.5">
-        <span className="text-[12px] font-semibold text-ink-dim">Revenue today</span>
-        <span className="font-display text-base font-bold text-accent-2">
-          <CountUp to={4218} duration={1.4} format={(v) => `$${Math.round(v).toLocaleString()}`} />
-        </span>
-      </div>
-    </BrowserFrame>
+      {/* checkout summary */}
+      <g transform="translate(248 60)">
+        <rect width="112" height="180" rx="14" fill="var(--color-surface)" stroke="var(--color-border-strong)" />
+
+        <rect x="16" y="20" width="44" height="7" rx="3.5" fill="var(--color-ink-faint)" />
+
+        <rect x="16" y="40" width="80" height="6" rx="3" fill="var(--color-border)" />
+        <rect x="16" y="54" width="62" height="6" rx="3" fill="var(--color-border)" />
+        <rect x="16" y="68" width="72" height="6" rx="3" fill="var(--color-border)" />
+        <path d="M16 86h80" stroke="var(--color-border)" />
+
+        {/* revenue series */}
+        <g transform="translate(16 98)">
+          {bars.map((h, i) => (
+            <rect
+              key={i}
+              x={i * 14}
+              y={72 - h}
+              width="8"
+              height={h}
+              rx="3"
+              fill={i === bars.length - 1 ? "var(--color-accent)" : "var(--color-accent-2)"}
+              opacity={i === bars.length - 1 ? 1 : 0.32}
+            />
+          ))}
+        </g>
+
+        <rect x="16" y="150" width="80" height="16" rx="8" fill="var(--color-accent)" />
+      </g>
+
+      {/* cart badge */}
+      <g transform="translate(330 44)">
+        <circle r="17" fill="var(--color-accent)" />
+        <path
+          d="M-7 -5h13l-1.6 9h-9.8Z"
+          fill="none"
+          stroke="var(--color-surface)"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+        />
+        <path d="M-4 -5v-2.5a4 4 0 0 1 8 0V-5" fill="none" stroke="var(--color-surface)" strokeWidth="1.8" />
+      </g>
+    </svg>
   );
 }

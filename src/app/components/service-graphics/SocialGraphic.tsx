@@ -1,69 +1,69 @@
-"use client";
+/** A scheduled month, and the reach one planned post sets off. */
+export default function SocialGraphic() {
+  const cells = Array.from({ length: 20 }, (_, i) => i);
+  const scheduled = new Set([2, 5, 9, 12, 16]);
+  const live = 9;
 
-import CountUp from "../CountUp";
-import PhoneFrame from "../frames/PhoneFrame";
-
-export default function SocialGraphic({ tiltDisabled = false }: { tiltDisabled?: boolean }) {
   return (
-    <PhoneFrame tiltDisabled={tiltDisabled}>
-      <div className="mb-3 flex items-center gap-2.5">
-        <span className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent-2 font-display text-[11px] font-bold text-[#04101f]">
-          WI
-        </span>
-        <div>
-          <div className="text-[12.5px] font-bold">@webinventers</div>
-          <div className="text-[10.5px] text-ink-faint">Sponsored</div>
-        </div>
-      </div>
+    <svg viewBox="0 0 400 300" className="h-full w-full" role="presentation">
+      {/* calendar */}
+      <rect x="40" y="48" width="196" height="204" rx="14" fill="var(--color-surface)" stroke="var(--color-border-strong)" />
+      <path d="M40 84h196" stroke="var(--color-border)" />
+      <rect x="56" y="62" width="46" height="8" rx="4" fill="var(--color-ink-faint)" />
 
-      <div className="mb-3 aspect-[4/3] rounded-xl bg-[radial-gradient(120%_120%_at_30%_20%,#1B5AF0_0%,#0B1330_60%,#05070C_100%)]" />
+      {cells.map((i) => {
+        const col = i % 5;
+        const row = Math.floor(i / 5);
+        const x = 56 + col * 36;
+        const y = 98 + row * 38;
+        const isScheduled = scheduled.has(i);
+        const isLive = i === live;
+        return (
+          <g key={i}>
+            <rect
+              x={x}
+              y={y}
+              width="28"
+              height="28"
+              rx="8"
+              fill={isLive ? "var(--color-accent)" : isScheduled ? "var(--color-bg-alt)" : "transparent"}
+              stroke={isLive ? "none" : "var(--color-border)"}
+            />
+            {isScheduled && !isLive && <circle cx={x + 14} cy={y + 14} r="3" fill="var(--color-accent-2)" />}
+            {isLive && <circle cx={x + 14} cy={y + 14} r="4" fill="var(--color-surface)" />}
+          </g>
+        );
+      })}
 
-      <div className="flex items-center justify-between text-[12px] font-semibold text-ink-dim">
-        <span className="flex items-center gap-1.5">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4 text-accent-2"
-          >
-            <path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9Z" />
-          </svg>
-          <CountUp to={2840} duration={1.3} format={(v) => Math.round(v).toLocaleString()} />
-        </span>
-        <span className="flex items-center gap-1.5">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4 text-accent-2"
-          >
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
-          </svg>
-          <CountUp to={186} duration={1.3} />
-        </span>
-        <span className="flex items-center gap-1.5">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4 text-accent-2"
-          >
-            <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7" />
-            <path d="M16 6l-4-4-4 4" />
-            <path d="M12 2v13" />
-          </svg>
-          <CountUp to={94} duration={1.3} />
-        </span>
-      </div>
-    </PhoneFrame>
+      {/* reach graph from the live post */}
+      <g transform="translate(268 150)">
+        <circle r="74" fill="none" stroke="var(--color-border)" strokeDasharray="3 6" />
+        <circle r="46" fill="none" stroke="var(--color-border)" />
+
+        <path d="M-46 0 L-92 -2" stroke="var(--color-border-strong)" strokeDasharray="3 4" />
+
+        {[
+          [0, -46],
+          [40, -22],
+          [40, 24],
+          [0, 46],
+          [-40, 24],
+        ].map(([x, y], i) => (
+          <g key={i}>
+            <path d={`M0 0 L${x} ${y}`} stroke="var(--color-border-strong)" />
+            <circle cx={x} cy={y} r={i === 1 ? 11 : 8} fill="var(--color-surface)" stroke="var(--color-accent-2)" strokeWidth="1.8" />
+          </g>
+        ))}
+
+        <circle cx="62" cy="-54" r="6" fill="var(--color-accent-2)" opacity="0.5" />
+        <circle cx="-58" cy="-58" r="4" fill="var(--color-accent-2)" opacity="0.35" />
+
+        <circle r="22" fill="var(--color-accent)" />
+        <path
+          d="M-7 1.5c0-4 3-7 7-7s7 3 7 7c0 5-7 9-7 9s-7-4-7-9Z"
+          fill="var(--color-surface)"
+        />
+      </g>
+    </svg>
   );
 }
