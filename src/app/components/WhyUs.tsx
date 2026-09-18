@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 const ICON_PROPS = {
   viewBox: "0 0 24 24",
   fill: "none",
@@ -86,15 +90,62 @@ const REASONS = [
   },
 ];
 
+function RoamingBorder() {
+  return (
+    <svg
+      className="pointer-events-none absolute inset-0 h-full w-full"
+      aria-hidden="true"
+      viewBox="0 0 300 200"
+      preserveAspectRatio="none"
+    >
+      {/* base border */}
+      <rect
+        x="1"
+        y="1"
+        width="298"
+        height="198"
+        rx="18"
+        ry="18"
+        fill="none"
+        stroke="var(--color-border)"
+        strokeWidth="1"
+        vectorEffect="non-scaling-stroke"
+      />
+      {/* animated blue trace — always active, covers ~75% of perimeter */}
+      <rect
+        x="1"
+        y="1"
+        width="298"
+        height="198"
+        rx="18"
+        ry="18"
+        fill="none"
+        stroke="#3B82F6"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+        strokeDasharray="600 200"
+        strokeDashoffset="0"
+        style={{
+          animation: "why-border-chase 4s linear infinite",
+        }}
+      />
+    </svg>
+  );
+}
+
 export default function WhyUs() {
+  const [active, setActive] = useState<number | null>(null);
+
   return (
     <section className="bg-bg-alt pt-14 pb-18 lg:pt-[104px] lg:pb-[140px]" id="about">
-      <div className="mx-auto grid w-full max-w-[1400px] items-start gap-8 px-5 sm:px-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-        <div className="max-w-[640px]">
+      <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
+        {/* centered heading */}
+        <div className="mx-auto mb-14 max-w-[640px] text-center sm:mb-20">
           <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
             Why Web Inventers
           </span>
-          <h2 className="mb-5 font-display text-[clamp(28px,4vw,42px)] leading-[1.1] font-semibold tracking-[-0.02em]">
+          <h2 className="mb-5 font-manrope text-[clamp(32px,4.6vw,52px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
             A technology partner, not a template shop
           </h2>
           <p className="text-[17px] leading-[1.6] text-ink-dim">
@@ -104,19 +155,36 @@ export default function WhyUs() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {REASONS.map((reason) => (
-            <div
-              key={reason.title}
-              className="rounded-[18px] border border-border bg-bg-alt p-6 transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-accent/40"
-            >
-              {reason.icon}
-              <h3 className="mb-1.5 text-[15.5px] font-bold">{reason.title}</h3>
-              <p className="text-[13.5px] leading-[1.55] text-ink-dim">
-                {reason.desc}
-              </p>
-            </div>
-          ))}
+        {/* 6 boxes */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+          {REASONS.map((reason, i) => {
+            const isActive = active === i;
+            return (
+              <div
+                key={reason.title}
+                className="why-card group relative overflow-hidden rounded-[18px] border border-transparent bg-bg-alt p-6"
+                onMouseEnter={() => setActive(i)}
+                onMouseLeave={() => setActive(null)}
+              >
+                <RoamingBorder />
+
+                {/* content */}
+                <div
+                  className="relative z-10 transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
+                  style={{
+                    transform: isActive ? "scale(1) translateY(0)" : "scale(0.97) translateY(3px)",
+                    opacity: isActive ? 1 : 0.75,
+                  }}
+                >
+                  {reason.icon}
+                  <h3 className="mb-1.5 text-[15.5px] font-bold">{reason.title}</h3>
+                  <p className="text-[13.5px] leading-[1.55] text-ink-dim">
+                    {reason.desc}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
