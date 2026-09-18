@@ -59,6 +59,16 @@
   --animate-pulse-orb: pulse-orb 6s ease-in-out infinite;
   --animate-float-node: float-node 7s ease-in-out infinite;
   --animate-marquee: marquee 14s linear infinite;
+  --animate-marquee-vertical: marquee-vertical 40s linear infinite;
+}
+
+@keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
 }
 
 @keyframes spin-slow {
@@ -257,7 +267,17 @@
   .animate-spin-slow-dashed,
   .animate-pulse-orb,
   .animate-float-node,
-  .animate-marquee {
+  .animate-marquee,
+  .animate-marquee-vertical {
     animation-play-state: paused;
   }
+}
+
+/* Testimonial column hover — slow the marquee when the pointer is over a column */
+.testimonial-col:hover .animate-marquee-vertical {
+  animation-play-state: paused;
+}
+
+.testimonial-col .animate-marquee-vertical {
+  transition: border-color 0.3s ease;
 }
