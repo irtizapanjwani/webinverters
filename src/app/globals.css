@@ -295,3 +295,24 @@
     stroke-dashoffset: -800;
   }
 }
+
+/* ---------- Process: split-arc chase around circles ---------- */
+@keyframes process-chase {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -260;
+  }
+}
+
+/* ---------- Process: sequential line draw ---------- */
+.draw {
+  animation: draw-line 600ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+@keyframes draw-line {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
