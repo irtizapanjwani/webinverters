@@ -104,6 +104,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export default function FeaturedWork() {
   const [hovered, setHovered] = useState<number | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>("ALL");
+  const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   const reduce = useReducedMotion();
   const filterRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -137,6 +138,8 @@ export default function FeaturedWork() {
           >
             {CATEGORIES.map((cat, i) => {
               const isActive = cat === activeCategory;
+              const isHovered = cat === hoveredCategory;
+              const showPill = hoveredCategory ? isHovered : isActive;
               return (
                 <button
                   key={cat}
@@ -145,19 +148,21 @@ export default function FeaturedWork() {
                   aria-selected={isActive}
                   type="button"
                   onClick={() => setActiveCategory(cat)}
+                  onMouseEnter={() => setHoveredCategory(cat)}
+                  onMouseLeave={() => setHoveredCategory(null)}
                   className="relative cursor-pointer px-5 py-2 text-[13px] font-semibold tracking-[0.04em] uppercase transition-colors duration-300"
                 >
-                  {isActive && (
+                  {showPill && (
                     <motion.span
                       layoutId="active-category-pill"
                       aria-hidden="true"
-                      transition={reduce ? { duration: 0 } : { duration: 0.4, ease: EASE }}
+                      transition={reduce ? { duration: 0 } : { duration: 0.3, ease: EASE }}
                       className="absolute inset-0 rounded-full bg-accent"
                     />
                   )}
                   <span
                     className={`relative z-10 transition-colors duration-300 ${
-                      isActive ? "text-white" : "text-ink-dim hover:text-ink"
+                      showPill ? "text-white" : "text-ink-dim hover:text-ink"
                     }`}
                   >
                     {cat}
