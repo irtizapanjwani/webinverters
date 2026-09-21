@@ -63,42 +63,69 @@ export default function ServicesShowcase() {
               onMouseEnter={() => setActive(i)}
               onFocus={() => setActive(i)}
               onClick={() => setActive(i)}
-              className="group relative flex w-full items-center gap-4 border-b border-border py-5 pr-2 pl-6 text-left sm:py-6"
+              className="group relative w-full border-b border-border py-5 pr-2 pl-6 text-left sm:py-6"
             >
-              {isActive && (
-                <motion.span
-                  layoutId={`${baseId}-service-indicator`}
+              <div className="flex items-center gap-4">
+                {isActive && (
+                  <motion.span
+                    layoutId={`${baseId}-service-indicator`}
+                    aria-hidden="true"
+                    transition={reduce ? { duration: 0 } : { duration: 0.4, ease: EASE }}
+                    className="absolute top-2 bottom-2 left-0 w-[3px] rounded-full bg-accent"
+                  />
+                )}
+
+                <span
+                  className={`font-manrope text-[clamp(18px,2.2vw,26px)] leading-[1.3] font-semibold tracking-[-0.01em] transition-colors duration-300 ${
+                    isActive ? "text-accent" : "text-ink-dim group-hover:text-ink"
+                  }`}
+                >
+                  {item.shortTitle}
+                </span>
+
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   aria-hidden="true"
-                  transition={reduce ? { duration: 0 } : { duration: 0.4, ease: EASE }}
-                  className="absolute top-2 bottom-2 left-0 w-[3px] rounded-full bg-accent"
-                />
-              )}
+                  className={`ml-auto size-4 shrink-0 transition-all duration-300 ${
+                    isActive
+                      ? "translate-x-0 text-accent opacity-100"
+                      : "-translate-x-1 text-ink-faint opacity-0 group-hover:translate-x-0 group-hover:opacity-60"
+                  }`}
+                >
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </div>
 
-              <span
-                className={`font-manrope text-[clamp(18px,2.2vw,26px)] leading-[1.3] font-semibold tracking-[-0.01em] transition-colors duration-300 ${
-                  isActive ? "text-accent" : "text-ink-dim group-hover:text-ink"
-                }`}
-              >
-                {item.shortTitle}
-              </span>
-
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-                className={`ml-auto size-4 shrink-0 transition-all duration-300 ${
-                  isActive
-                    ? "translate-x-0 text-accent opacity-100"
-                    : "-translate-x-1 text-ink-faint opacity-0 group-hover:translate-x-0 group-hover:opacity-60"
-                }`}
-              >
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
+              {/* description expands inline on the active tab */}
+              <AnimatePresence initial={false}>
+                {isActive && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={reduce ? { duration: 0 } : { duration: 0.3, ease: EASE }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pt-4 pl-0">
+                      <p className="mb-5 max-w-[42ch] text-[15px] leading-[1.7] text-ink-dim">
+                        {item.description}
+                      </p>
+                      <a
+                        href="#"
+                        className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-8px_rgba(27,90,240,0.55)]"
+                      >
+                        Learn More
+                      </a>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </button>
           );
         })}
@@ -110,7 +137,7 @@ export default function ServicesShowcase() {
         role="tabpanel"
         aria-labelledby={tabId(active)}
         tabIndex={0}
-        className="relative min-h-[480px] overflow-hidden rounded-[24px] border border-border bg-bg-alt sm:min-h-[540px] lg:min-h-[600px]"
+        className="relative min-h-[480px] overflow-hidden rounded-[24px] sm:min-h-[540px] lg:min-h-[600px]"
       >
         <AnimatePresence initial={false}>
           <motion.div
@@ -125,7 +152,6 @@ export default function ServicesShowcase() {
             transition={swap}
             className="absolute inset-0 flex flex-col"
           >
-            {/* image area */}
             <div className="relative min-h-0 flex-1 overflow-hidden p-5 sm:p-8">
               <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[16px]">
                 <Image
@@ -137,16 +163,6 @@ export default function ServicesShowcase() {
                   priority={active === 0}
                 />
               </div>
-            </div>
-
-            {/* info area */}
-            <div className="border-t border-border px-6 py-6 sm:px-8 sm:py-7">
-              <h3 className="mb-2 font-manrope text-[19px] font-bold tracking-[-0.01em] sm:text-[21px]">
-                {service.title}
-              </h3>
-              <p className="max-w-[46ch] text-[15px] leading-[1.6] text-ink-dim">
-                {service.description}
-              </p>
             </div>
           </motion.div>
         </AnimatePresence>

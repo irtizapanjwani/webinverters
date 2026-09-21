@@ -1,14 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "./Button";
 
 const NAV_LINKS = [
-  { href: "#top", label: "Home" },
+  { href: "/", label: "Home" },
   { href: "#about", label: "About" },
   { href: "#services", label: "Services" },
-  { href: "#work", label: "Portfolio" },
+  { href: "/portfolio", label: "Portfolio" },
   { href: "#contact", label: "Contact" },
 ];
 
@@ -20,6 +22,7 @@ export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
@@ -84,7 +87,7 @@ export default function Nav() {
       }`}
     >
       <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between gap-6 px-5 sm:px-8">
-        <a href="#top" className="flex shrink-0 items-center" aria-label="Web Inventers home">
+        <Link href="/" className="flex shrink-0 items-center" aria-label="Web Inventers home">
           <span className={`relative block aspect-[1090/208] ${
             scrolled ? "h-7 sm:h-8" : "h-6 sm:h-8 lg:h-10 xl:h-12"
           }`}>
@@ -108,36 +111,57 @@ export default function Nav() {
               priority
             />
           </span>
-        </a>
+        </Link>
 
         <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              aria-current={link.label === "Home" ? "page" : undefined}
-              className={`relative rounded-full px-4 py-2.5 text-[14.5px] font-semibold transition-colors ${
-                link.label === "Home"
-                  ? `after:absolute after:bottom-1 after:left-4 after:right-4 after:h-0.5 after:rounded-sm ${
-                      scrolled
-                        ? "text-accent after:bg-accent"
-                        : "text-white after:bg-white"
-                    }`
-                  : scrolled
-                    ? "text-ink-dim hover:text-accent"
-                    : "text-white/85 hover:text-white"
-              }`}
-            >
-              {link.label}
-            </a>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const isHome = link.label === "Home";
+            const isPortfolio = link.label === "Portfolio";
+            const isActive =
+              (isHome && pathname === "/") ||
+              (isPortfolio && pathname === "/portfolio");
+
+            const linkClass = `relative rounded-full px-4 py-2.5 text-[14.5px] font-semibold transition-colors ${
+              isActive
+                ? `after:absolute after:bottom-1 after:left-4 after:right-4 after:h-0.5 after:rounded-sm ${
+                    scrolled
+                      ? "text-accent after:bg-accent"
+                      : "text-white after:bg-white"
+                  }`
+                : scrolled
+                  ? "text-ink-dim hover:text-accent"
+                  : "text-white/85 hover:text-white"
+            }`;
+
+            const isRoute = link.href.startsWith("/");
+
+            return isRoute ? (
+              <Link
+                key={link.label}
+                href={link.href}
+                aria-current={isActive ? "page" : undefined}
+                className={linkClass}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.label}
+                href={link.href}
+                aria-current={isActive ? "page" : undefined}
+                className={linkClass}
+              >
+                {link.label}
+              </a>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-3.5">
           {scrolled ? null : (
             <div className="hidden lg:block">
               <Button
-                href="#work"
+                href="/portfolio"
                 variant="ghost"
                 size="sm"
                 surface="dark"
@@ -202,20 +226,41 @@ export default function Nav() {
             </button>
           </div>
           <nav className="flex flex-col items-stretch gap-1" aria-label="Mobile">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                aria-current={link.label === "Home" ? "page" : undefined}
-                onClick={closeMenu}
-                className="border-b border-border px-2 py-4 text-xl font-semibold text-ink-dim"
-              >
-                {link.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isHome = link.label === "Home";
+              const isPortfolio = link.label === "Portfolio";
+              const isActive =
+                (isHome && pathname === "/") ||
+                (isPortfolio && pathname === "/portfolio");
+              const isRoute = link.href.startsWith("/");
+
+              return isRoute ? (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={closeMenu}
+                  className={`border-b border-border px-2 py-4 text-xl font-semibold ${
+                    isActive ? "text-accent" : "text-ink-dim"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={closeMenu}
+                  className="border-b border-border px-2 py-4 text-xl font-semibold text-ink-dim"
+                >
+                  {link.label}
+                </a>
+              );
+            })}
           </nav>
           <div className="mt-7 flex flex-col items-stretch gap-3.5">
-            <Button href="#work" variant="ghost" block onClick={closeMenu}>
+            <Button href="/portfolio" variant="ghost" block onClick={closeMenu}>
               View Our Work
             </Button>
             <Button href="#start-project" block onClick={closeMenu}>

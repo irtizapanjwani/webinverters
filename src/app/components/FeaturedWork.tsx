@@ -2,6 +2,7 @@
 
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useRef, useState } from "react";
 
 const CATEGORIES = ["ALL", "BRAND", "MARKETING", "PRODUCT"] as const;
@@ -116,17 +117,40 @@ export default function FeaturedWork() {
   return (
     <section className="py-18 lg:py-[140px]" id="work">
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
-        <div className="mb-10 max-w-[640px] sm:mb-16">
-          <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
-            Featured Work
-          </span>
-          <h2 className="mb-5 font-manrope text-[clamp(32px,4.6vw,52px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
-            Projects that moved the needle
-          </h2>
-          <p className="text-[17px] leading-[1.6] text-ink-dim">
-            A look at recent engagements — full case studies available on
-            request.
-          </p>
+        <div className="mb-10 sm:mb-16">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-[640px]">
+              <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
+                Featured Work
+              </span>
+              <h2 className="mb-5 font-manrope text-[clamp(32px,4.6vw,52px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
+                Projects that moved the needle
+              </h2>
+              <p className="text-[17px] leading-[1.6] text-ink-dim">
+                A look at recent engagements — full case studies available on
+                request.
+              </p>
+            </div>
+            <Link
+              href="/portfolio"
+              className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-border-strong bg-black/[0.02] px-6 py-3 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 hover:border-black/20 hover:bg-black/[0.05]"
+            >
+              VIEW PROJECTS
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                className="size-4 transition-transform duration-300 group-hover:translate-x-1"
+              >
+                <path
+                  d="M3 8h10M9 4l4 4-4 4"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
         </div>
 
         {/* ---------- category filters ---------- */}
