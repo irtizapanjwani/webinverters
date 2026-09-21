@@ -13,8 +13,6 @@ const SERVICE_LINKS = [
 const COMPANY_LINKS = [
   { label: "About", href: "#about" },
   { label: "Portfolio", href: "#work" },
-  { label: "Blog", href: "#", soon: true },
-  { label: "Careers", href: "#", soon: true },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -65,7 +63,18 @@ const SOCIALS = [
 
 export default function Footer() {
   return (
-    <footer id="contact" className="border-t border-border pt-14 pb-8 lg:pt-22">
+    <footer id="contact" className="relative border-t border-border pt-14 pb-8 lg:pt-22 overflow-visible">
+      {/* Scrolling marquee below footer */}
+      <div className="absolute bottom-0 left-0 w-full translate-y-full overflow-hidden py-5" aria-hidden="true">
+        <div className="animate-marquee flex whitespace-nowrap">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <span key={i} className="mx-6 font-manrope text-[28px] font-extrabold tracking-[-0.02em] text-accent/[0.2]">
+              LET&rsquo;S BUILD, SOMETHING AWESOME!
+            </span>
+          ))}
+        </div>
+      </div>
+
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         <div className="mb-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
           <div>
@@ -124,24 +133,12 @@ export default function Footer() {
             <ul>
               {COMPANY_LINKS.map((link) => (
                 <li key={link.label} className="mb-3.25">
-                  {link.soon ? (
-                    <span
-                      aria-disabled="true"
-                      className="inline-flex items-center gap-2 text-[14.5px] text-ink-faint"
-                    >
-                      {link.label}
-                      <span className="text-[11px] font-bold tracking-[0.1em] uppercase">
-                        Soon
-                      </span>
-                    </span>
-                  ) : (
-                    <a
-                      href={link.href}
-                      className="inline-block py-0.5 text-[14.5px] text-ink-dim transition-colors hover:text-ink"
-                    >
-                      {link.label}
-                    </a>
-                  )}
+                  <a
+                    href={link.href}
+                    className="inline-block py-0.5 text-[14.5px] text-ink-dim transition-colors hover:text-ink"
+                  >
+                    {link.label}
+                  </a>
                 </li>
               ))}
             </ul>

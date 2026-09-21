@@ -13,9 +13,9 @@ const TESTIMONIALS = [
   {
     quote:
       "Responsive, sharp, and genuinely invested in our growth. It felt like having an in-house engineering team.",
-    name: "Daniyal Raza",
+    name: "Ryan Mitchell",
     role: "Founder, Aster Health",
-    platform: "clutch" as const,
+    platform: "trustpilot" as const,
   },
   {
     quote:
@@ -27,23 +27,23 @@ const TESTIMONIALS = [
   {
     quote:
       "They turned our brand vision into something tangible we could finally share with confidence. Outstanding creative work.",
-    name: "Omar Farooq",
+    name: "David Thompson",
     role: "CEO, Solstice Studio",
-    platform: "clutch" as const,
+    platform: "facebook" as const,
   },
   {
     quote:
       "Our conversion rate jumped 40% within the first month after launch. The ROI has been undeniable.",
-    name: "Priya Nair",
+    name: "Sarah Collins",
     role: "Head of Growth, Lumina Platform",
-    platform: "google" as const,
+    platform: "trustpilot" as const,
   },
   {
     quote:
       "They understood our audience better than we did. The social strategy they built drives real engagement, not just vanity metrics.",
     name: "James Whitford",
     role: "Director of Marketing, Ember Social",
-    platform: "clutch" as const,
+    platform: "facebook" as const,
   },
   {
     quote:
@@ -57,7 +57,7 @@ const TESTIMONIALS = [
       "The team's technical depth is rare. They solved problems we didn't even know we had — before they became problems.",
     name: "Marcus Lee",
     role: "CTO, Canopy Growth",
-    platform: "clutch" as const,
+    platform: "trustpilot" as const,
   },
 ];
 
@@ -95,9 +95,20 @@ function FacebookLogo() {
   );
 }
 
+function TrustpilotLogo() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-label="Trustpilot">
+      <path d="M12 1l3.09 6.26L22 8.27l-5 4.87 1.18 6.88L12 16.77l-6.18 3.25L7 13.14 2 8.27l6.91-1.01L12 1z" fill="#00B67A" />
+      <path d="M12 1l3.09 6.26L22 8.27l-5 4.87 1.18 6.88L12 16.77V1z" fill="#00B67A" />
+      <path d="M12 1v15.77l-6.18 3.25L7 13.14 2 8.27l6.91-1.01L12 1z" fill="#00B67A" />
+    </svg>
+  );
+}
+
 const PLATFORM = {
   google: GoogleLogo,
-  clutch: FacebookLogo,
+  facebook: FacebookLogo,
+  trustpilot: TrustpilotLogo,
 } as const;
 
 function StarRating() {
