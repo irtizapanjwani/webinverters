@@ -1,5 +1,6 @@
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
+import HeroVideo from "./components/HeroVideo";
 import HeroIntro from "./components/HeroIntro";
 import Stats from "./components/Stats";
 import Services from "./components/Services";
@@ -12,9 +13,11 @@ import Footer from "./components/Footer";
 
 export default function Home() {
   return (
-    <div className="w-full bg-bg">
+    <div className="relative w-full bg-bg">
       {/* homepage-only entrance animation */}
       <HeroIntro />
+      {/* Spans the header and the hero, ending at the "Trusted by" strip. */}
+      <HeroVideo />
       <Nav />
       <main id="top">
         {/* Scoped clip for the Trust & Results orb expansion: the circle may

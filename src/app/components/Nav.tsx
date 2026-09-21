@@ -98,14 +98,38 @@ export default function Nav() {
     >
       <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between gap-6 px-5 sm:px-8">
         <a href="#top" className="flex shrink-0 items-center" aria-label="Web Inventers home">
-          <Image
-            src="/web-inverters-logo-dark.png"
-            alt="Web Inventers logo"
-            width={1090}
-            height={208}
-            className="h-7 w-auto sm:h-10 lg:h-12 xl:h-14"
-            priority
-          />
+          {/* Two passes over the same file, so the mark and the wordmark can be
+              different colours. A CSS filter cannot address part of an image
+              and this asset is a single flat PNG, so the split is geometric:
+              the bottom layer shows the artwork untouched (blue W), and the top
+              layer is the same image inverted to white and clipped to
+              everything right of the W — the dot and "Web inventers". 17% is
+              where the gap between the mark and the dot falls in THIS file; a
+              new logo means re-measuring it, or shipping an SVG and dropping
+              this whole trick. */}
+          <span className="relative block aspect-[1090/208] h-7 sm:h-10 lg:h-12 xl:h-14">
+            <Image
+              src="/web-inverters-logo-dark.png"
+              alt="Web Inventers logo"
+              fill
+              sizes="294px"
+              className="object-contain"
+              priority
+            />
+            <Image
+              src="/web-inverters-logo-dark.png"
+              alt=""
+              aria-hidden="true"
+              fill
+              sizes="294px"
+              /* Fades out as the header gains its light background, where the
+                 original dark wordmark is the readable one. */
+              className={`object-contain brightness-0 invert transition-opacity duration-300 [clip-path:inset(0_0_0_17%)] ${
+                scrolled ? "opacity-0" : "opacity-100"
+              }`}
+              priority
+            />
+          </span>
         </a>
 
         <nav className="hidden items-center gap-0.5 xl:flex" aria-label="Primary">
@@ -114,10 +138,12 @@ export default function Nav() {
               <span
                 key={link.label}
                 aria-disabled="true"
-                className="relative cursor-default rounded-full px-4 py-2.5 text-[14.5px] font-semibold text-ink-faint"
+                className={`relative cursor-default rounded-full px-4 py-2.5 text-[14.5px] font-semibold transition-colors ${
+                  scrolled ? "text-ink-faint" : "text-white/65"
+                }`}
               >
                 {link.label}
-                <span className="ml-1.5 align-middle text-[11px] font-bold tracking-[0.1em] text-ink-faint uppercase">
+                <span className="ml-1.5 align-middle text-[11px] font-bold tracking-[0.1em] uppercase">
                   Soon
                 </span>
               </span>
@@ -126,10 +152,20 @@ export default function Nav() {
                 key={link.label}
                 href={link.href}
                 aria-current={link.label === "Home" ? "page" : undefined}
+                /* Over the hero video the header is transparent, so the links
+                   are white. Once it compacts it gains a solid light
+                   background, where white would be invisible — so they return
+                   to the ink palette. */
                 className={`relative rounded-full px-4 py-2.5 text-[14.5px] font-semibold transition-colors ${
                   link.label === "Home"
-                    ? "text-accent after:absolute after:bottom-1 after:left-4 after:right-4 after:h-0.5 after:rounded-sm after:bg-accent"
-                    : "text-ink-dim hover:text-accent"
+                    ? `after:absolute after:bottom-1 after:left-4 after:right-4 after:h-0.5 after:rounded-sm ${
+                        scrolled
+                          ? "text-accent after:bg-accent"
+                          : "text-white after:bg-white"
+                      }`
+                    : scrolled
+                      ? "text-ink-dim hover:text-accent"
+                      : "text-white/85 hover:text-white"
                 }`}
               >
                 {link.label}
@@ -142,12 +178,17 @@ export default function Nav() {
           {/* wrapper controls visibility: putting `hidden` on the Button itself
               collides with the `inline-flex` in its base classes */}
           <div className="hidden xl:block">
-            <Button href="#work" variant="ghost" size="sm">
+            <Button
+              href="#work"
+              variant="ghost"
+              size="sm"
+              surface={scrolled ? "light" : "dark"}
+            >
               View Our Work
             </Button>
           </div>
           <Button href="#start-project" size="sm">
-            Get a Quote
+            Start Project
           </Button>
           <button
             ref={triggerRef}
@@ -232,7 +273,7 @@ export default function Nav() {
               View Our Work
             </Button>
             <Button href="#start-project" block onClick={closeMenu}>
-              Get a Quote
+              Start Project
             </Button>
           </div>
         </div>

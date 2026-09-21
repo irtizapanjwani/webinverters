@@ -6,29 +6,18 @@ import { useEffect, useState } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-// Timeline (ms). Total ≈ 2.8s.
-const ORB_AT = 1000; // logo → orb crossfade begins
-const TRAVEL_AT = 1700; // big orb starts moving right
-const COPY_AT = 2150; // hero copy eases in mid-travel
-const HANDOFF_AT = 2500; // travel ends; real orb takes over instantly
-const END_AT = 2800;
+// Timeline (ms). Total ≈ 2.2s.
+const FADE_AT = 1400; // logo and backdrop start clearing; hero copy eases in
+const END_AT = 2200;
 
 // Durations (s)
 const LOGO_IN = 0.55;
-const CROSSFADE = 0.5;
-const TRAVEL = 0.8;
-const BACKDROP_FADE = 0.8; // runs with the travel so both finish together
-const ORB_HANDOFF_FADE = 0.25;
-
-const FALLBACK = { orbSize: 160, bigOrb: 420, logoWidth: 560 };
-
-type Phase = "logo" | "orb" | "travel" | "handoff";
-type Stage = { dx: number; dy: number; orbSize: number; bigOrb: number; logoWidth: number };
+const FADE_OUT = 0.6;
+const BACKDROP_FADE = 0.8;
 
 export default function HeroIntro() {
   const [finished, setFinished] = useState(false);
-  const [phase, setPhase] = useState<Phase>("logo");
-  const [stage, setStage] = useState<Stage | null>(null);
+  const [leaving, setLeaving] = useState(false);
   const prefersReduced = useReducedMotion();
 
   useEffect(() => {
@@ -46,40 +35,17 @@ export default function HeroIntro() {
 
     root.setAttribute("data-hero-intro", "running");
 
-    const measure = () => {
-      const orb = document.querySelector<HTMLElement>("[data-hero-orb]");
-      if (!orb) return;
-      const rect = orb.getBoundingClientRect();
-      // The centre orb is deliberately much larger than the hero orb; it
-      // shrinks into place as it travels.
-      const bigOrb = Math.min(420, window.innerWidth * 0.42, window.innerHeight * 0.52);
-      setStage({
-        dx: rect.left + rect.width / 2 - window.innerWidth / 2,
-        dy: rect.top + rect.height / 2 - window.innerHeight / 2,
-        orbSize: rect.width,
-        bigOrb,
-        logoWidth: Math.min(bigOrb * 1.35, window.innerWidth * 0.86),
-      });
-    };
-    measure();
-
-    // A stale measurement would fling the orb to the wrong spot, so bail out.
     const onScroll = () => {
       if (window.scrollY > 40) end();
     };
     window.addEventListener("scroll", onScroll, { passive: true });
 
     const timers = [
-      setTimeout(() => setPhase("orb"), ORB_AT),
-      setTimeout(() => setPhase("travel"), TRAVEL_AT),
-      setTimeout(() => root.setAttribute("data-hero-intro", "revealing"), COPY_AT),
-      // The real orb is revealed with no transition at the exact moment the
-      // overlay orb lands on it at full opacity, so the swap is invisible and
-      // the orb is never even momentarily faded.
       setTimeout(() => {
-        root.removeAttribute("data-hero-intro");
-        setPhase("handoff");
-      }, HANDOFF_AT),
+        setLeaving(true);
+        // Releases the hero copy so it eases in behind the clearing overlay.
+        root.setAttribute("data-hero-intro", "revealing");
+      }, FADE_AT),
       setTimeout(end, END_AT),
     ];
 
@@ -92,33 +58,23 @@ export default function HeroIntro() {
 
   if (finished) return null;
 
-  const orbSize = stage?.orbSize ?? FALLBACK.orbSize;
-  const bigOrb = stage?.bigOrb ?? FALLBACK.bigOrb;
-  const logoWidth = stage?.logoWidth ?? FALLBACK.logoWidth;
-  // Starts big, ends at exactly 1 so the box-shadow matches the real orb's.
-  const startScale = bigOrb / orbSize;
-
-  const moving = phase === "travel" || phase === "handoff";
-
   return (
     <div className="hero-intro pointer-events-none fixed inset-0 z-200" aria-hidden="true">
       <motion.div
         className="absolute inset-0 bg-bg"
         initial={{ opacity: 1 }}
-        animate={{ opacity: moving ? 0 : 1 }}
+        animate={{ opacity: leaving ? 0 : 1 }}
         transition={{ duration: BACKDROP_FADE, ease: "easeInOut" }}
       />
 
-      {/* Logo stage — shares the orb stage's centre so the crossfade happens
-          in place, with no jump and no gap. */}
       <div className="absolute inset-0 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{
-            opacity: phase === "logo" ? 1 : 0,
-            scale: phase === "logo" ? 1 : 1.04,
+            opacity: leaving ? 0 : 1,
+            scale: leaving ? 1.04 : 1,
           }}
-          transition={{ duration: phase === "logo" ? LOGO_IN : CROSSFADE, ease: EASE }}
+          transition={{ duration: leaving ? FADE_OUT : LOGO_IN, ease: EASE }}
         >
           <Image
             src="/web-inverters-logo-dark.png"
@@ -126,33 +82,7 @@ export default function HeroIntro() {
             width={1090}
             height={208}
             priority
-            style={{ width: logoWidth }}
-            className="h-auto max-w-none"
-          />
-        </motion.div>
-      </div>
-
-      {/* Orb stage — big at centre, then shrinks and travels to the hero orb */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <motion.div
-          className="relative"
-          style={{ width: orbSize, height: orbSize }}
-          initial={{ x: 0, y: 0, scale: startScale }}
-          animate={{
-            x: moving ? (stage?.dx ?? 0) : 0,
-            y: moving ? (stage?.dy ?? 0) : 0,
-            scale: moving ? 1 : startScale,
-          }}
-          transition={{ duration: TRAVEL, ease: EASE }}
-        >
-          <motion.div
-            className="orb-surface absolute inset-0 rounded-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: phase === "logo" || phase === "handoff" ? 0 : 1 }}
-            transition={{
-              duration: phase === "handoff" ? ORB_HANDOFF_FADE : CROSSFADE,
-              ease: "easeInOut",
-            }}
+            className="h-auto w-[min(567px,86vw)] max-w-none"
           />
         </motion.div>
       </div>
