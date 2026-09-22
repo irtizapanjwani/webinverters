@@ -158,7 +158,7 @@ export default function ServicesShowcase() {
                   src={service.image}
                   alt={service.imageAlt}
                   fill
-                  className="object-cover"
+                  className={service.imageFit === "contain" ? "object-contain" : "object-cover"}
                   sizes="(max-width: 1024px) 100vw, 58vw"
                   priority={active === 0}
                 />
