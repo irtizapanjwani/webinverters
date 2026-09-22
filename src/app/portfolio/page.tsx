@@ -102,14 +102,56 @@ const PROJECTS = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/* Headline intro: tall light-blue/white boxes sweep open left→right and cover
+   the headline line; then they close away L→R while the headline — sitting
+   behind them the whole time — is unveiled by a clip wipe, not a fade-in. */
+const HERO_BOXES = [
+  "w-12 bg-white sm:w-16",
+  "w-8 bg-[#8fb4ff] sm:w-10",
+  "w-14 bg-white/85 sm:w-20",
+  "hidden w-7 bg-[#3a68ee] sm:block sm:w-9",
+  "hidden w-16 bg-[#c9dbff] sm:block",
+  "hidden w-10 bg-white sm:block sm:w-12",
+  "hidden w-12 bg-[#5b86f5] lg:block",
+  "hidden w-8 bg-white/80 lg:block",
+  "hidden w-14 bg-[#9ec1ff] lg:block",
+  "hidden w-6 bg-white lg:block",
+];
+const BOX_STAGGER = 0.08;
+const BOX_DURATION = 0.45;
+const CLOSE_STAGGER = 0.07;
+const CLOSE_DURATION = 0.4;
+const BOXES_DONE = BOX_STAGGER * (HERO_BOXES.length - 1) + BOX_DURATION;
+const UNVEIL_DURATION = CLOSE_STAGGER * (HERO_BOXES.length - 1) + CLOSE_DURATION;
+
+const boxVariants = {
+  cover: (i: number) => ({
+    scaleX: 1,
+    opacity: 1,
+    transition: { duration: BOX_DURATION, ease: EASE, delay: BOX_STAGGER * i },
+  }),
+  gone: (i: number) => ({
+    scaleX: 0,
+    opacity: 0,
+    transition: { duration: CLOSE_DURATION, ease: EASE, delay: CLOSE_STAGGER * i },
+  }),
+};
+
 export default function PortfolioPage() {
   const [activeCategory, setActiveCategory] = useState<Category>("ALL");
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
+  const [unveiling, setUnveiling] = useState(false);
   const reduce = useReducedMotion();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    if (reduce) return;
+    const t = setTimeout(() => setUnveiling(true), BOXES_DONE * 1000);
+    return () => clearTimeout(t);
+  }, [reduce]);
 
   const filtered =
     activeCategory === "ALL"
@@ -130,9 +172,46 @@ export default function PortfolioPage() {
             <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
               Selected Work
             </span>
-            <h1 className="mb-5 font-manrope text-[clamp(36px,5vw,56px)] leading-[1.06] font-extrabold tracking-[-0.02em] text-white">
-              Crafted with passion
-            </h1>
+
+            {/* Headline slot — boxes cover the line L→R, then close away L→R
+                while the headline (behind them all along) is clip-unveiled */}
+            <div className="relative mb-5">
+              {!reduce && (
+                <motion.div
+                  aria-hidden="true"
+                  className="absolute inset-0 z-10 flex items-center gap-1.5 sm:gap-2"
+                >
+                  {HERO_BOXES.map((cls, i) => (
+                    <motion.span
+                      key={i}
+                      custom={i}
+                      variants={boxVariants}
+                      initial="gone"
+                      animate={unveiling ? "gone" : "cover"}
+                      className={`block h-10 rounded-[5px] sm:h-12 lg:h-14 ${cls}`}
+                      style={{ transformOrigin: "left center" }}
+                    />
+                  ))}
+                </motion.div>
+              )}
+
+              <motion.h1
+                className="font-manrope text-[clamp(36px,5vw,56px)] leading-[1.06] font-extrabold tracking-[-0.02em] text-white"
+                initial={reduce ? false : { clipPath: "inset(0 100% 0 0)" }}
+                animate={{
+                  clipPath:
+                    reduce || unveiling ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
+                }}
+                transition={
+                  reduce
+                    ? { duration: 0 }
+                    : { duration: UNVEIL_DURATION, ease: EASE }
+                }
+              >
+                Crafted with passion
+              </motion.h1>
+            </div>
+
             <p className="max-w-[640px] text-[17px] leading-[1.6] text-white/70">
               A showcase of our recent work — each project tailored to solve
               real business challenges and deliver measurable results.
@@ -186,56 +265,125 @@ export default function PortfolioPage() {
               </div>
             </LayoutGroup>
 
-            {/* Project cards — alternating layout */}
+            {/* Project cards — alternating layout; children reveal on scroll */}
             <div className="flex flex-col gap-16 lg:gap-20">
               <AnimatePresence mode="popLayout">
                 {filtered.map((project, i) => {
                   const isEven = i % 2 === 0;
+                  const view = { once: true, amount: 0.3 } as const;
                   return (
                     <motion.article
                       key={project.title}
                       layout
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 30 }}
                       transition={
                         reduce
                           ? { duration: 0 }
                           : { duration: 0.5, ease: EASE, layout: { duration: 0.5, ease: EASE } }
                       }
-                      className={`grid items-center gap-8 lg:gap-14 ${
+                      className={`grid items-stretch gap-8 lg:gap-14 ${
                         isEven
-                          ? "lg:grid-cols-[1.1fr_1fr]"
-                          : "lg:grid-cols-[1fr_1.1fr]"
+                          ? "lg:grid-cols-[1fr_1.2fr]"
+                          : "lg:grid-cols-[1.2fr_1fr]"
                       }`}
                     >
-                      {/* Image */}
-                      <div
-                        className={`relative aspect-[4/3] overflow-hidden rounded-[20px] ${
-                          !isEven ? "lg:order-2" : ""
-                        }`}
-                      >
-                        <Image
-                          src={project.image}
-                          alt={project.imageAlt}
-                          fill
-                          className="object-cover transition-transform duration-500 ease-[cubic-bezier(.2,.7,.3,1)] hover:scale-[1.03]"
-                          sizes="(max-width: 1024px) 100vw, 50vw"
-                        />
+                      {/* Image — two-phase reveal: (1) zooms out into place and
+                          stays locked there, (2) then a soft blur-dissolve
+                          (fade-form, not a plain opacity fade) clarifies it.
+                          Cell stretches; frame keeps 4:3 and sits top-aligned
+                          so the heading stays parallel to the image top. */}
+                      <div className={`flex min-w-0 ${!isEven ? "lg:order-2" : ""}`}>
+                        <motion.div
+                          className="relative aspect-[4/3] w-full overflow-hidden rounded-[20px]"
+                          initial={
+                            reduce
+                              ? false
+                              : { opacity: 0, scale: 1.2, filter: "blur(18px)" }
+                          }
+                          whileInView={{
+                            opacity: [0, 1, 1],
+                            scale: [1.2, 1, 1],
+                            filter: ["blur(18px)", "blur(8px)", "blur(0px)"],
+                          }}
+                          viewport={view}
+                          transition={
+                            reduce
+                              ? { duration: 0 }
+                              : {
+                                  duration: 1.5,
+                                  times: [0, 0.5, 1],
+                                  ease: [0.22, 1, 0.36, 1],
+                                }
+                          }
+                        >
+                          <Image
+                            src={project.image}
+                            alt={project.imageAlt}
+                            fill
+                            className="object-cover transition-transform duration-500 ease-[cubic-bezier(.2,.7,.3,1)] hover:scale-[1.03]"
+                            sizes="(max-width: 1024px) 100vw, 45vw"
+                          />
+                        </motion.div>
                       </div>
 
-                      {/* Text */}
-                      <div className={`flex flex-col justify-center ${!isEven ? "lg:order-1" : ""}`}>
-                        <span className="mb-3 inline-block w-fit rounded-full bg-accent/[0.08] px-3.5 py-1 text-[11px] font-bold tracking-[0.1em] text-accent uppercase">
-                          {project.tag}
-                        </span>
-                        <h2 className="mb-4 font-manrope text-[clamp(24px,3vw,36px)] leading-[1.15] font-extrabold tracking-[-0.02em]">
-                          {project.title}
-                        </h2>
-                        <p className="mb-8 max-w-[480px] text-[15.5px] leading-[1.65] text-ink-dim">
-                          {project.description}
-                        </p>
+                      {/* Text — heading top-aligned with image top, button
+                          bottom-aligned with image bottom */}
+                      <div
+                        className={`flex flex-col justify-between ${
+                          !isEven ? "lg:order-1" : ""
+                        }`}
+                      >
                         <div>
+                          {/* Tag + heading drop in from above */}
+                          <motion.span
+                            initial={reduce ? false : { opacity: 0, y: -28 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={view}
+                            transition={
+                              reduce ? { duration: 0 } : { duration: 0.5, ease: EASE }
+                            }
+                            className="mb-3 inline-block w-fit rounded-full bg-accent/[0.08] px-3.5 py-1 text-[11px] font-bold tracking-[0.1em] text-accent uppercase"
+                          >
+                            {project.tag}
+                          </motion.span>
+                          <motion.h2
+                            initial={reduce ? false : { opacity: 0, y: -36 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={view}
+                            transition={
+                              reduce
+                                ? { duration: 0 }
+                                : { duration: 0.55, ease: EASE, delay: 0.08 }
+                            }
+                            className="mb-4 font-manrope text-[clamp(24px,3vw,36px)] leading-[1.15] font-extrabold tracking-[-0.02em]"
+                          >
+                            {project.title}
+                          </motion.h2>
+                          {/* Description rises from below */}
+                          <motion.p
+                            initial={reduce ? false : { opacity: 0, y: 32 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={view}
+                            transition={
+                              reduce
+                                ? { duration: 0 }
+                                : { duration: 0.55, ease: EASE, delay: 0.14 }
+                            }
+                            className="mb-8 max-w-[480px] text-[15.5px] leading-[1.65] text-ink-dim lg:mb-0"
+                          >
+                            {project.description}
+                          </motion.p>
+                        </div>
+                        <motion.div
+                          initial={reduce ? false : { opacity: 0, y: 28 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={view}
+                          transition={
+                            reduce
+                              ? { duration: 0 }
+                              : { duration: 0.5, ease: EASE, delay: 0.22 }
+                          }
+                        >
                           <a
                             href="#"
                             className="group inline-flex items-center gap-2 rounded-full border border-border-strong bg-black/[0.02] px-6 py-3 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 hover:border-black/20 hover:bg-black/[0.05]"
@@ -255,7 +403,7 @@ export default function PortfolioPage() {
                               />
                             </svg>
                           </a>
-                        </div>
+                        </motion.div>
                       </div>
                     </motion.article>
                   );
