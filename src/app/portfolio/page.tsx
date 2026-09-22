@@ -102,55 +102,52 @@ const PROJECTS = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/* Headline intro: tall light-blue/white boxes sweep open left→right and cover
-   the headline line; then they close away L→R while the headline — sitting
-   behind them the whole time — is unveiled by a clip wipe, not a fade-in. */
-const HERO_BOXES = [
-  "w-12 bg-white sm:w-16",
-  "w-8 bg-[#8fb4ff] sm:w-10",
-  "w-14 bg-white/85 sm:w-20",
-  "hidden w-7 bg-[#3a68ee] sm:block sm:w-9",
-  "hidden w-16 bg-[#c9dbff] sm:block",
-  "hidden w-10 bg-white sm:block sm:w-12",
-  "hidden w-12 bg-[#5b86f5] lg:block",
-  "hidden w-8 bg-white/80 lg:block",
-  "hidden w-14 bg-[#9ec1ff] lg:block",
-  "hidden w-6 bg-white lg:block",
-];
-const BOX_STAGGER = 0.08;
-const BOX_DURATION = 0.45;
-const CLOSE_STAGGER = 0.07;
-const CLOSE_DURATION = 0.4;
-const BOXES_DONE = BOX_STAGGER * (HERO_BOXES.length - 1) + BOX_DURATION;
-const UNVEIL_DURATION = CLOSE_STAGGER * (HERO_BOXES.length - 1) + CLOSE_DURATION;
+/* Headline intro: a text-width cover wipes on L→R (no scale/pop), fully covers
+   the line, holds, then wipes off L→R.
 
-const boxVariants = {
-  cover: (i: number) => ({
-    scaleX: 1,
-    opacity: 1,
-    transition: { duration: BOX_DURATION, ease: EASE, delay: BOX_STAGGER * i },
-  }),
-  gone: (i: number) => ({
-    scaleX: 0,
-    opacity: 0,
-    transition: { duration: CLOSE_DURATION, ease: EASE, delay: CLOSE_STAGGER * i },
-  }),
+   The text is not animated at all. It is simply off while the cover is arriving
+   and on for the whole wipe-off, so the cover uncovering it IS the reveal —
+   letter one is already there on the wipe's first frame and the line reads as
+   having been behind the box the entire time. */
+/* 1.5s end to end: the cover sweeps on, barely pauses, and is gone. */
+const COVER_APPEAR = 0.45;
+const COVER_HOLD = 0.15;
+const COVER_WIPE = 0.9;
+
+/** "on" = cover sweeping in over bare background, text hidden.
+ *  "hold" = line fully covered; the text is switched on under here, unseen.
+ *  "off" = cover sweeping away, uncovering text that is already in place. */
+type CoverPhase = "on" | "hold" | "off";
+
+const COVER_CLIP: Record<CoverPhase, string> = {
+  on: "inset(0% 0% 0% 0%)",
+  hold: "inset(0% 0% 0% 0%)",
+  off: "inset(0% 0% 0% 100%)",
 };
 
 export default function PortfolioPage() {
   const [activeCategory, setActiveCategory] = useState<Category>("ALL");
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
-  const [unveiling, setUnveiling] = useState(false);
   const reduce = useReducedMotion();
+  const [coverPhase, setCoverPhase] = useState<CoverPhase>("on");
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  // One clock for the cover and the text, so the text is guaranteed to be in
+  // place before the wipe-off starts rather than racing it.
   useEffect(() => {
     if (reduce) return;
-    const t = setTimeout(() => setUnveiling(true), BOXES_DONE * 1000);
-    return () => clearTimeout(t);
+    const toHold = setTimeout(() => setCoverPhase("hold"), COVER_APPEAR * 1000);
+    const toOff = setTimeout(
+      () => setCoverPhase("off"),
+      (COVER_APPEAR + COVER_HOLD) * 1000
+    );
+    return () => {
+      clearTimeout(toHold);
+      clearTimeout(toOff);
+    };
   }, [reduce]);
 
   const filtered =
@@ -173,43 +170,37 @@ export default function PortfolioPage() {
               Selected Work
             </span>
 
-            {/* Headline slot — boxes cover the line L→R, then close away L→R
-                while the headline (behind them all along) is clip-unveiled */}
-            <div className="relative mb-5">
+            {/* Headline: cover wipes on L→R (no scale/pop), fully covers the
+                text (incl. vertical bleed), holds, then wipes off L→R */}
+            <div className="relative mb-5 w-fit max-w-full">
               {!reduce && (
                 <motion.div
                   aria-hidden="true"
-                  className="absolute inset-0 z-10 flex items-center gap-1.5 sm:gap-2"
-                >
-                  {HERO_BOXES.map((cls, i) => (
-                    <motion.span
-                      key={i}
-                      custom={i}
-                      variants={boxVariants}
-                      initial="gone"
-                      animate={unveiling ? "gone" : "cover"}
-                      className={`block h-10 rounded-[5px] sm:h-12 lg:h-14 ${cls}`}
-                      style={{ transformOrigin: "left center" }}
-                    />
-                  ))}
-                </motion.div>
+                  className="absolute inset-x-0 -top-2 -bottom-2 z-10 rounded-[4px] bg-gradient-to-r from-white via-[#d7e4ff] to-[#7aa7ff]"
+                  /* Clipped to nothing at the left edge, then opened out to
+                     full width, then clipped away from the left again — all
+                     four sides given in the same units so the interpolation
+                     between phases is unambiguous. */
+                  initial={{ clipPath: "inset(0% 100% 0% 0%)" }}
+                  animate={{ clipPath: COVER_CLIP[coverPhase] }}
+                  transition={{
+                    duration: coverPhase === "off" ? COVER_WIPE : COVER_APPEAR,
+                    ease: EASE,
+                  }}
+                />
               )}
 
-              <motion.h1
-                className="font-manrope text-[clamp(36px,5vw,56px)] leading-[1.06] font-extrabold tracking-[-0.02em] text-white"
-                initial={reduce ? false : { clipPath: "inset(0 100% 0 0)" }}
-                animate={{
-                  clipPath:
-                    reduce || unveiling ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
-                }}
-                transition={
-                  reduce
-                    ? { duration: 0 }
-                    : { duration: UNVEIL_DURATION, ease: EASE }
-                }
+              {/* Deliberately NOT animated. It is hidden while the cover sweeps
+                  in, and fully opaque for the entire wipe-off — switched on
+                  during the hold, while the cover still hides it completely.
+                  Nothing fades: the box moving off the text is the reveal. */}
+              <h1
+                className={`font-manrope text-[clamp(36px,5vw,56px)] leading-[1.06] font-extrabold tracking-[-0.02em] text-white ${
+                  reduce || coverPhase === "off" ? "opacity-100" : "opacity-0"
+                }`}
               >
                 Crafted with passion
-              </motion.h1>
+              </h1>
             </div>
 
             <p className="max-w-[640px] text-[17px] leading-[1.6] text-white/70">
@@ -287,33 +278,19 @@ export default function PortfolioPage() {
                           : "lg:grid-cols-[1.2fr_1fr]"
                       }`}
                     >
-                      {/* Image — two-phase reveal: (1) zooms out into place and
-                          stays locked there, (2) then a soft blur-dissolve
-                          (fade-form, not a plain opacity fade) clarifies it.
+                      {/* Image — rises into place from below and fades in, the
+                          same move as the text column and the View Project
+                          button, so the whole row travels in one direction.
                           Cell stretches; frame keeps 4:3 and sits top-aligned
                           so the heading stays parallel to the image top. */}
                       <div className={`flex min-w-0 ${!isEven ? "lg:order-2" : ""}`}>
                         <motion.div
                           className="relative aspect-[4/3] w-full overflow-hidden rounded-[20px]"
-                          initial={
-                            reduce
-                              ? false
-                              : { opacity: 0, scale: 1.2, filter: "blur(18px)" }
-                          }
-                          whileInView={{
-                            opacity: [0, 1, 1],
-                            scale: [1.2, 1, 1],
-                            filter: ["blur(18px)", "blur(8px)", "blur(0px)"],
-                          }}
+                          initial={reduce ? false : { opacity: 0, y: 56 }}
+                          whileInView={{ opacity: 1, y: 0 }}
                           viewport={view}
                           transition={
-                            reduce
-                              ? { duration: 0 }
-                              : {
-                                  duration: 1.5,
-                                  times: [0, 0.5, 1],
-                                  ease: [0.22, 1, 0.36, 1],
-                                }
+                            reduce ? { duration: 0 } : { duration: 1, ease: EASE }
                           }
                         >
                           <Image
@@ -340,7 +317,7 @@ export default function PortfolioPage() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={view}
                             transition={
-                              reduce ? { duration: 0 } : { duration: 0.5, ease: EASE }
+                              reduce ? { duration: 0 } : { duration: 0.9, ease: EASE }
                             }
                             className="mb-3 inline-block w-fit rounded-full bg-accent/[0.08] px-3.5 py-1 text-[11px] font-bold tracking-[0.1em] text-accent uppercase"
                           >
@@ -353,7 +330,7 @@ export default function PortfolioPage() {
                             transition={
                               reduce
                                 ? { duration: 0 }
-                                : { duration: 0.55, ease: EASE, delay: 0.08 }
+                                : { duration: 1, ease: EASE, delay: 0.15 }
                             }
                             className="mb-4 font-manrope text-[clamp(24px,3vw,36px)] leading-[1.15] font-extrabold tracking-[-0.02em]"
                           >
@@ -367,7 +344,7 @@ export default function PortfolioPage() {
                             transition={
                               reduce
                                 ? { duration: 0 }
-                                : { duration: 0.55, ease: EASE, delay: 0.14 }
+                                : { duration: 1, ease: EASE, delay: 0.3 }
                             }
                             className="mb-8 max-w-[480px] text-[15.5px] leading-[1.65] text-ink-dim lg:mb-0"
                           >
@@ -381,7 +358,7 @@ export default function PortfolioPage() {
                           transition={
                             reduce
                               ? { duration: 0 }
-                              : { duration: 0.5, ease: EASE, delay: 0.22 }
+                              : { duration: 0.9, ease: EASE, delay: 0.45 }
                           }
                         >
                           <a
