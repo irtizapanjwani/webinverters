@@ -11,18 +11,28 @@ const NAV_LINKS = [
   { href: "#about", label: "About" },
   { href: "#services", label: "Services" },
   { href: "/portfolio", label: "Portfolio" },
-  { href: "#contact", label: "Contact" },
+  { href: "/contact", label: "Contact" },
 ];
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])';
 
-export default function Nav() {
+type NavProps = {
+  /** The page begins on a light background (e.g. /contact), so the
+   *  unscrolled nav must use dark text and the dark logo — not the
+   *  white-on-dark treatment used over the landing/portfolio heroes. */
+  onLight?: boolean;
+};
+
+export default function Nav({ onLight = false }: NavProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
+
+  /** Text/logo contrast mode: dark ink when on a light surface. */
+  const darkText = onLight || scrolled;
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
@@ -106,7 +116,7 @@ export default function Nav() {
               fill
               sizes="294px"
               className={`object-contain brightness-0 invert transition-opacity duration-300 [clip-path:inset(0_0_0_17%)] ${
-                scrolled ? "opacity-0" : "opacity-100"
+                darkText ? "opacity-0" : "opacity-100"
               }`}
               priority
             />
@@ -117,18 +127,20 @@ export default function Nav() {
           {NAV_LINKS.map((link) => {
             const isHome = link.label === "Home";
             const isPortfolio = link.label === "Portfolio";
+            const isContact = link.label === "Contact";
             const isActive =
               (isHome && pathname === "/") ||
-              (isPortfolio && pathname === "/portfolio");
+              (isPortfolio && pathname === "/portfolio") ||
+              (isContact && pathname === "/contact");
 
             const linkClass = `relative rounded-full px-4 py-2.5 text-[14.5px] font-semibold transition-colors ${
               isActive
                 ? `after:absolute after:bottom-1 after:left-4 after:right-4 after:h-0.5 after:rounded-sm ${
-                    scrolled
+                    darkText
                       ? "text-accent after:bg-accent"
                       : "text-white after:bg-white"
                   }`
-                : scrolled
+                : darkText
                   ? "text-ink-dim hover:text-accent"
                   : "text-white/85 hover:text-white"
             }`;
@@ -164,7 +176,7 @@ export default function Nav() {
                 href="/portfolio"
                 variant="ghost"
                 size="sm"
-                surface="dark"
+                surface={onLight ? "light" : "dark"}
               >
                 View Our Work
               </Button>
@@ -229,9 +241,11 @@ export default function Nav() {
             {NAV_LINKS.map((link) => {
               const isHome = link.label === "Home";
               const isPortfolio = link.label === "Portfolio";
+              const isContact = link.label === "Contact";
               const isActive =
                 (isHome && pathname === "/") ||
-                (isPortfolio && pathname === "/portfolio");
+                (isPortfolio && pathname === "/portfolio") ||
+                (isContact && pathname === "/contact");
               const isRoute = link.href.startsWith("/");
 
               return isRoute ? (

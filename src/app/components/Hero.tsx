@@ -5,12 +5,12 @@ import { ArrowRightIcon } from "./icons";
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative overflow-hidden pt-6 sm:pt-8 lg:pt-8">
+    <section id="hero" className="relative overflow-hidden pt-16 sm:pt-20 lg:pt-28">
       <div className="dot-field pointer-events-none absolute inset-x-0 top-0 h-[640px]" aria-hidden="true" />
 
       <div className="relative mx-auto grid w-full max-w-[1400px] items-center gap-6 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-[60px]">
         <div data-hero-reveal>
-          <h1 className="mb-4 font-manrope text-[clamp(38px,5.6vw,68px)] leading-[1.05] font-extrabold tracking-[-0.02em] text-white">
+          <h1 className="mb-4 font-display text-[clamp(26px,4.4vw,54px)] leading-[1.05] font-extrabold tracking-[-0.02em] text-white">
             Digital Solutions That Move Your Business{" "}
             <RotatingWord />
           </h1>

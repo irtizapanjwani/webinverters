@@ -119,10 +119,10 @@ export default function Process() {
     <section ref={sectionRef} className="bg-bg-alt py-18 lg:py-[140px]">
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         <div className="mx-auto mb-10 max-w-[640px] text-center sm:mb-16">
-          <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
+          <span className="mb-2.5 block text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
             Our Process
           </span>
-          <h2 className="font-display text-[clamp(28px,4vw,42px)] leading-[1.1] font-semibold tracking-[-0.02em]">
+          <h2 className="font-display text-[clamp(21px,3.2vw,34px)] leading-[1.1] font-semibold tracking-[-0.02em]">
             How we take an idea to launch
           </h2>
         </div>
@@ -170,7 +170,7 @@ export default function Process() {
             <div key={step.num} className="group relative z-1">
               <div
                 ref={(el) => { circleRefs.current[i] = el; }}
-                className="relative z-1 mb-5.5 flex size-[46px] items-center justify-center rounded-full bg-bg-alt font-display text-[15px] font-bold transition-[box-shadow] duration-300 group-hover:shadow-[0_0_0_6px_rgba(14,116,144,0.1)]"
+                className="relative z-1 mb-5.5 flex size-[46px] items-center justify-center rounded-full bg-bg-alt font-mono text-[15px] font-semibold transition-[box-shadow] duration-300 group-hover:shadow-[0_0_0_6px_rgba(14,116,144,0.1)]"
               >
                 {step.num}
               </div>

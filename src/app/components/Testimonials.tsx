@@ -170,10 +170,10 @@ export default function Testimonials() {
     <section className="pt-14 pb-18 lg:pt-[104px] lg:pb-[140px] overflow-hidden">
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         <div className="mb-10 max-w-[640px] sm:mb-16">
-          <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
+          <span className="mb-2.5 block text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
             Testimonials
           </span>
-          <h2 className="font-manrope text-[clamp(32px,4.6vw,52px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
+          <h2 className="font-display text-[clamp(23px,3.7vw,42px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
             What clients say about working with us
           </h2>
         </div>

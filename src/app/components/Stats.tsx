@@ -80,10 +80,10 @@ function StatsContent({ values, white }: { values: number[]; white?: boolean }) 
       className={`${white ? "stats-white " : ""}mx-auto w-full max-w-[1400px] px-5 sm:px-8`}
     >
       <div className="mx-auto mb-10 max-w-[640px] text-center sm:mb-16">
-        <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
+        <span className="mb-2.5 block text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
           Trust &amp; Results
         </span>
-        <h2 className="mb-5 font-display text-[clamp(28px,4vw,42px)] leading-[1.1] font-semibold tracking-[-0.02em]">
+        <h2 className="mb-5 font-display text-[clamp(21px,3.2vw,34px)] leading-[1.1] font-semibold tracking-[-0.02em]">
           Numbers that back up the work
         </h2>
         <p className="text-[17px] leading-[1.6] text-ink-dim">

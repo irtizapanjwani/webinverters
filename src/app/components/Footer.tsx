@@ -13,7 +13,7 @@ const SERVICE_LINKS = [
 const COMPANY_LINKS = [
   { label: "About", href: "#about" },
   { label: "Portfolio", href: "/portfolio" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const LEGAL_LINKS = [
@@ -68,7 +68,7 @@ export default function Footer() {
       <div className="absolute bottom-0 left-0 w-full translate-y-full overflow-hidden py-5" aria-hidden="true">
         <div className="animate-marquee flex whitespace-nowrap">
           {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="mx-6 font-manrope text-[28px] font-extrabold tracking-[-0.02em] text-accent/[0.2]">
+            <span key={i} className="mx-6 font-display text-[28px] font-extrabold tracking-[-0.02em] text-accent/[0.2]">
               LET&rsquo;S BUILD, SOMETHING AWESOME!
             </span>
           ))}

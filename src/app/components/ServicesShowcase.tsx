@@ -76,7 +76,7 @@ export default function ServicesShowcase() {
                 )}
 
                 <span
-                  className={`font-manrope text-[clamp(18px,2.2vw,26px)] leading-[1.3] font-semibold tracking-[-0.01em] transition-colors duration-300 ${
+                  className={`font-display text-[clamp(15px,1.8vw,21px)] leading-[1.3] font-semibold tracking-[-0.01em] transition-colors duration-300 ${
                     isActive ? "text-accent" : "text-ink-dim group-hover:text-ink"
                   }`}
                 >

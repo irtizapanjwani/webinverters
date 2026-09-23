@@ -142,10 +142,10 @@ export default function WhyUs() {
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         {/* centered heading */}
         <div className="mx-auto mb-14 max-w-[640px] text-center sm:mb-20">
-          <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
+          <span className="mb-2.5 block text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
             Why Web Inventers
           </span>
-          <h2 className="mb-5 font-manrope text-[clamp(32px,4.6vw,52px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
+          <h2 className="mb-5 font-display text-[clamp(23px,3.7vw,42px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
             A technology partner, not a template shop
           </h2>
           <p className="text-[17px] leading-[1.6] text-ink-dim">

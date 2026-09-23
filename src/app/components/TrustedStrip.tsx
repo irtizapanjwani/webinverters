@@ -10,11 +10,11 @@ import { useEffect, useRef, useState } from "react";
  *  fractions of that grid — Hilton's banner is 9 units tall, Toyota's oval is
  *  16 — so a uniform box would leave Hilton looking half the weight of the
  *  rest. These values equalise the ink, not the box. */
-type Brand =
+export type Brand =
   | { name: string; kind: "mark"; height: string; path: string }
   | { name: string; kind: "wordmark"; text: string; className: string };
 
-const BRANDS: Brand[] = [
+export const BRANDS: Brand[] = [
   {
     name: "Toyota",
     kind: "mark",
@@ -57,7 +57,7 @@ const BRANDS: Brand[] = [
   },
 ];
 
-function BrandLogo({ brand }: { brand: Brand }) {
+export function BrandLogo({ brand }: { brand: Brand }) {
   if (brand.kind === "wordmark") {
     return <span className={`${brand.className} leading-none`}>{brand.text}</span>;
   }
@@ -107,7 +107,7 @@ export default function TrustedStrip() {
 
        Now that the hero copy is white, the rise is no longer capped just below it — it climbs well into
        the hero, which deepens the fade and darkens the type background. */
-    <div data-surface="dark" className="relative mt-24 w-full">
+    <div data-surface="dark" className="relative mt-12 w-full">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 -top-[220px] bottom-0 bg-[linear-gradient(to_bottom,transparent,rgba(0,0,0,0.3)_28%,rgba(0,0,0,0.72)_60%,rgba(0,0,0,0.95)_100%)]"

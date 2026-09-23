@@ -15,7 +15,7 @@ export default function FinalCTA() {
             className="pointer-events-none absolute left-1/2 top-[-220px] size-[520px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(27,90,240,0.35),transparent_68%)] blur-[10px]"
             aria-hidden="true"
           />
-          <h2 className="relative mb-4.5 font-display text-[clamp(30px,5vw,48px)] font-bold tracking-[-0.02em] text-white">
+          <h2 className="relative mb-4.5 font-display text-[clamp(22px,4vw,39px)] font-bold tracking-[-0.02em] text-white">
             Have a Project in Mind?
           </h2>
           <p className="relative mx-auto mb-9 max-w-[520px] text-[17px] text-white/70">
@@ -27,7 +27,7 @@ export default function FinalCTA() {
               Start Your Project
               <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-0.75" />
             </Button>
-            <Button href="#contact" variant="ghost" surface="dark">
+            <Button href="/contact" variant="ghost" surface="dark">
               Book a Consultation
             </Button>
           </div>

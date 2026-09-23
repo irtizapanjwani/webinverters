@@ -120,10 +120,10 @@ export default function FeaturedWork() {
         <div className="mb-10 sm:mb-16">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-[640px]">
-              <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
+              <span className="mb-2.5 block text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
                 Featured Work
               </span>
-              <h2 className="mb-5 font-manrope text-[clamp(32px,4.6vw,52px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
+              <h2 className="mb-5 font-display text-[clamp(23px,3.7vw,42px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
                 Projects that moved the needle
               </h2>
               <p className="text-[17px] leading-[1.6] text-ink-dim">
@@ -236,7 +236,7 @@ export default function FeaturedWork() {
                     />
                   </div>
                   <div className="px-0.5">
-                    <h3 className="mb-0.5 font-manrope text-[17px] font-bold tracking-[-0.01em]">
+                    <h3 className="mb-0.5 font-display text-[17px] font-bold tracking-[-0.01em]">
                       {project.title}
                     </h3>
                     <span className="text-[12px] font-medium tracking-[0.08em] text-ink-faint uppercase">

@@ -166,7 +166,7 @@ export default function PortfolioPage() {
         {/* Hero header on dark bg */}
         <div className="bg-ink pt-40 pb-20 lg:pt-48 lg:pb-28">
           <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
-            <span className="mb-2.5 block font-display text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
+            <span className="mb-2.5 block text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
               Selected Work
             </span>
 
@@ -195,7 +195,7 @@ export default function PortfolioPage() {
                   during the hold, while the cover still hides it completely.
                   Nothing fades: the box moving off the text is the reveal. */}
               <h1
-                className={`font-manrope text-[clamp(36px,5vw,56px)] leading-[1.06] font-extrabold tracking-[-0.02em] text-white ${
+                className={`font-display text-[clamp(25px,4vw,45px)] leading-[1.06] font-extrabold tracking-[-0.02em] text-white ${
                   reduce || coverPhase === "off" ? "opacity-100" : "opacity-0"
                 }`}
               >
@@ -332,7 +332,7 @@ export default function PortfolioPage() {
                                 ? { duration: 0 }
                                 : { duration: 1, ease: EASE, delay: 0.15 }
                             }
-                            className="mb-4 font-manrope text-[clamp(24px,3vw,36px)] leading-[1.15] font-extrabold tracking-[-0.02em]"
+                            className="mb-4 font-display text-[clamp(19px,2.5vw,29px)] leading-[1.15] font-extrabold tracking-[-0.02em]"
                           >
                             {project.title}
                           </motion.h2>
