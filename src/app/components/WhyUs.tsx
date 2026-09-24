@@ -1,7 +1,8 @@
 "use client";
 
+import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const VIDEO_TESTIMONIALS = [
   {
@@ -96,7 +97,59 @@ const DARK_SHADES = [
   "bg-[radial-gradient(120%_100%_at_14%_88%,rgba(27,90,240,0.55),transparent_62%),linear-gradient(135deg,#05070C,#0B1330)]",
 ];
 
-export default function WhyUs() {
+/**
+ * Silent looping clip filling a testimonial card, subject on the right. Loads
+ * and plays only while the card is near the viewport — the clips sit far down
+ * the page, so nothing is fetched until the visitor gets there — and never
+ * plays under reduced motion.
+ */
+function VideoBackdrop({ src }: { src: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const reduce = useReducedMotion();
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video || reduce) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { rootMargin: "200px" }
+    );
+    io.observe(video);
+    return () => io.disconnect();
+  }, [reduce]);
+
+  return (
+    <>
+      <video
+        ref={ref}
+        src={src}
+        muted
+        loop
+        playsInline
+        preload="none"
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover object-[center_20%]"
+      />
+      {/* Darkens the left, where the text sits, and clears toward the
+          subject on the right. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,7,12,0.86)_0%,rgba(5,7,12,0.62)_42%,rgba(5,7,12,0)_78%)]"
+      />
+    </>
+  );
+}
+
+type WhyUsProps = {
+  /** One clip per testimonial card, in order. Omit to keep the plain cards
+   *  (the landing page does). */
+  testimonialVideos?: string[];
+};
+
+export default function WhyUs({ testimonialVideos }: WhyUsProps = {}) {
   const [active, setActive] = useState<number | null>(null);
 
   const contentStyle = (i: number) => {
@@ -120,29 +173,44 @@ export default function WhyUs() {
           </h2>
         </div>
 
-        {/* video testimonials — media slots stay empty until the videos land */}
+        {/* video testimonials — a clip fills the card when one is passed in */}
         <div className="mb-4 grid grid-cols-1 gap-4 sm:mb-5 lg:grid-cols-2 lg:gap-5">
-          {VIDEO_TESTIMONIALS.map((t, i) => (
-            <div
-              key={t.quote}
-              className={CARD_CLASS}
-              onMouseEnter={() => setActive(i)}
-              onMouseLeave={() => setActive(null)}
-            >
-              {/* Text holds the left ~64% of the card, leaving clear space on the
-                  right. Type is sized so the copy stays short and the card
-                  reads as a wide rectangle rather than growing tall. */}
+          {VIDEO_TESTIMONIALS.map((t, i) => {
+            const video = testimonialVideos?.[i];
+            return (
               <div
-                className="relative z-10 transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] lg:max-w-[64%]"
-                style={contentStyle(i)}
+                key={t.quote}
+                data-surface={video ? "dark" : undefined}
+                className={
+                  video
+                    ? "why-card group relative overflow-hidden rounded-[18px] border border-white/10 bg-[#05070C] p-6 sm:p-7"
+                    : CARD_CLASS
+                }
+                onMouseEnter={() => setActive(i)}
+                onMouseLeave={() => setActive(null)}
               >
-                <p className="mb-3 text-[clamp(16px,1.4vw,19px)] leading-[1.35] font-medium text-ink italic">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <p className="text-[13.5px] leading-[1.55] text-ink-dim">{t.body}</p>
+                {video && <VideoBackdrop src={video} />}
+                {/* Text holds the left ~64% of the card, leaving the right to
+                    the subject of the clip (or clear space without one). Type
+                    is sized so the card reads as a wide rectangle. */}
+                <div
+                  className="relative z-10 transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] lg:max-w-[64%]"
+                  style={contentStyle(i)}
+                >
+                  <p
+                    className={`mb-3 text-[clamp(16px,1.4vw,19px)] leading-[1.35] font-medium italic ${
+                      video ? "text-white" : "text-ink"
+                    }`}
+                  >
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                  <p className={`text-[13.5px] leading-[1.55] ${video ? "text-white/80" : "text-ink-dim"}`}>
+                    {t.body}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* trust badges */}

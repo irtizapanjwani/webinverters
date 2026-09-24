@@ -35,8 +35,11 @@ export default function AboutPage() {
         {/* Who We Are / Our Vision / Our Mission — pinned scroll story */}
         <AboutStory />
 
-        {/* The landing page's "Why Web Inventers" section, reused as-is */}
-        <WhyUs />
+        {/* The landing page's "Why Web Inventers" section, with a clip in each
+            testimonial card (the landing page keeps the plain cards).
+            ⚠ DEMO: video-2 and video-3 are Brand Vision's client testimonials,
+            used only to preview the layout — replace before launch. */}
+        <WhyUs testimonialVideos={["/about/video-2.mp4", "/about/video-3.mp4"]} />
 
         {/* Frequently Asked Questions, from public/faqs.txt */}
         <FAQ />
