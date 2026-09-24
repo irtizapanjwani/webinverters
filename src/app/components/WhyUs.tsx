@@ -48,13 +48,13 @@ function TrustpilotWordmark() {
   );
 }
 
-/** Official BBB Accredited Business A+ seal (public/arating.webp, 529×342),
+/** Official BBB Accredited Business A+ seal (public/about/arating.webp, 529×342),
  *  supplied by Web Inventers. Shown as-is: its own white field and blue frame
  *  already carry it on the dark card. */
 function BbbSeal() {
   return (
     <Image
-      src="/arating.webp"
+      src="/about/arating.webp"
       alt="BBB Accredited Business, A+ rating"
       width={529}
       height={342}
@@ -63,12 +63,12 @@ function BbbSeal() {
   );
 }
 
-/** Official Clutch "Top Web Designers" badges (public/cluth.webp, 1215×360),
+/** Official Clutch "Top Web Designers" badges (public/about/cluth.webp, 1215×360),
  *  supplied by Web Inventers — one image holding all three badges. */
 function ClutchBadges() {
   return (
     <Image
-      src="/cluth.webp"
+      src="/about/cluth.webp"
       alt="Clutch Top Web Designers badges"
       width={1215}
       height={360}
@@ -97,13 +97,23 @@ const DARK_SHADES = [
   "bg-[radial-gradient(120%_100%_at_14%_88%,rgba(27,90,240,0.55),transparent_62%),linear-gradient(135deg,#05070C,#0B1330)]",
 ];
 
+type TestimonialVideo = {
+  src: string;
+  /** Still of the first frame, shown at once so the card is never an empty
+   *  black box while the clip loads (and shown alone under reduced motion). */
+  poster?: string;
+};
+
 /**
- * Silent looping clip filling a testimonial card, subject on the right. Loads
- * and plays only while the card is near the viewport — the clips sit far down
- * the page, so nothing is fetched until the visitor gets there — and never
- * plays under reduced motion.
+ * Silent looping clip filling a testimonial card, subject on the right. The
+ * poster paints immediately; the clip itself starts fetching well before the
+ * card scrolls into view (600px ahead) so it is ready to play on arrival, and
+ * pauses once the card leaves. Never plays under reduced motion.
+ *
+ * Clips should be web-encoded with the index at the front ("faststart") so
+ * playback can begin before the whole file has arrived.
  */
-function VideoBackdrop({ src }: { src: string }) {
+function VideoBackdrop({ src, poster }: TestimonialVideo) {
   const ref = useRef<HTMLVideoElement>(null);
   const reduce = useReducedMotion();
 
@@ -115,7 +125,7 @@ function VideoBackdrop({ src }: { src: string }) {
         if (entry.isIntersecting) video.play().catch(() => {});
         else video.pause();
       },
-      { rootMargin: "200px" }
+      { rootMargin: "600px 0px" }
     );
     io.observe(video);
     return () => io.disconnect();
@@ -126,10 +136,11 @@ function VideoBackdrop({ src }: { src: string }) {
       <video
         ref={ref}
         src={src}
+        poster={poster}
         muted
         loop
         playsInline
-        preload="none"
+        preload="metadata"
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover object-[center_20%]"
       />
@@ -146,7 +157,7 @@ function VideoBackdrop({ src }: { src: string }) {
 type WhyUsProps = {
   /** One clip per testimonial card, in order. Omit to keep the plain cards
    *  (the landing page does). */
-  testimonialVideos?: string[];
+  testimonialVideos?: TestimonialVideo[];
 };
 
 export default function WhyUs({ testimonialVideos }: WhyUsProps = {}) {
@@ -189,7 +200,7 @@ export default function WhyUs({ testimonialVideos }: WhyUsProps = {}) {
                 onMouseEnter={() => setActive(i)}
                 onMouseLeave={() => setActive(null)}
               >
-                {video && <VideoBackdrop src={video} />}
+                {video && <VideoBackdrop {...video} />}
                 {/* Text holds the left ~64% of the card, leaving the right to
                     the subject of the clip (or clear space without one). Type
                     is sized so the card reads as a wide rectangle. */}

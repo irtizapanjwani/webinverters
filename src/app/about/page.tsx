@@ -39,7 +39,12 @@ export default function AboutPage() {
             testimonial card (the landing page keeps the plain cards).
             ⚠ DEMO: video-2 and video-3 are Brand Vision's client testimonials,
             used only to preview the layout — replace before launch. */}
-        <WhyUs testimonialVideos={["/about/video-2.mp4", "/about/video-3.mp4"]} />
+        <WhyUs
+          testimonialVideos={[
+            { src: "/about/video-2-web.mp4", poster: "/about/video-2-poster.jpg" },
+            { src: "/about/video-3-web.mp4", poster: "/about/video-3-poster.jpg" },
+          ]}
+        />
 
         {/* Frequently Asked Questions, from public/faqs.txt */}
         <FAQ />
