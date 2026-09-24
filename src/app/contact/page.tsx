@@ -96,24 +96,29 @@ export default function ContactPage() {
                   forward.
                 </p>
 
-                {/* Contact rows — placeholders until the real details arrive,
-                    same convention as the footer's Get in Touch column. */}
+                {/* Contact rows — real phone and email, live links. */}
                 <div className="mt-14 flex flex-col gap-5 lg:mt-24">
                   <div className="flex items-center gap-4">
                     <span className="flex size-14 shrink-0 items-center justify-center rounded-[14px] border border-white/15 bg-white/[0.04] text-white">
                       <PhoneIcon />
                     </span>
-                    <span className="text-[15.5px] leading-[1.6] text-white/55 italic">
-                      [Phone Number]
-                    </span>
+                    <a
+                      href="tel:+18324021715"
+                      className="text-[15.5px] leading-[1.6] text-white/70 transition-colors hover:text-white"
+                    >
+                      (832) 402-1715
+                    </a>
                   </div>
                   <div className="flex items-center gap-4">
                     <span className="flex size-14 shrink-0 items-center justify-center rounded-[14px] border border-white/15 bg-white/[0.04] text-white">
                       <MailIcon />
                     </span>
-                    <span className="text-[15.5px] leading-[1.6] text-white/55 italic">
-                      [Email Address]
-                    </span>
+                    <a
+                      href="mailto:info@webinventers.com"
+                      className="text-[15.5px] leading-[1.6] text-white/70 transition-colors hover:text-white"
+                    >
+                      info@webinventers.com
+                    </a>
                   </div>
                 </div>
 

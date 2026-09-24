@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import NewsletterForm from "./NewsletterForm";
 
 const SERVICE_LINKS = [
@@ -16,9 +17,12 @@ const COMPANY_LINKS = [
   { label: "Contact", href: "/contact" },
 ];
 
-const LEGAL_LINKS = [
-  { label: "Privacy Policy", soon: true },
-  { label: "Terms & Conditions", soon: true },
+/** `href` means the page exists; `soon` marks one that does not yet, rendered
+ *  as a label rather than a link to nowhere. */
+const LEGAL_LINKS: { label: string; href?: string; soon?: boolean }[] = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms & Conditions", href: "/terms-and-conditions" },
+  { label: "Refund Policy", href: "/refund-policy" },
 ];
 
 const SOCIALS = [
@@ -148,18 +152,29 @@ export default function Footer() {
             <h3 className="mb-5 text-[13px] font-bold tracking-[0.08em] text-ink-faint uppercase">
               Get in Touch
             </h3>
-            {/* Placeholders until Web Inventers supplies the real details.
-                Kept as plain text — a tel:/mailto: link to a placeholder is a
-                broken action, not a pending one. */}
+            {/* Office address still pending from Web Inventers — kept as a
+                plain-text placeholder, since a tel:/mailto: link to a
+                placeholder is a broken action, not a pending one. Phone and
+                email are real, so they are live links. */}
             <ul>
               <li className="mb-3.25 text-[14.5px] text-ink-faint italic">
                 [Office Address]
               </li>
-              <li className="mb-3.25 text-[14.5px] text-ink-faint italic">
-                [Phone Number]
+              <li className="mb-3.25 text-[14.5px]">
+                <a
+                  href="tel:+18324021715"
+                  className="text-ink-dim transition-colors hover:text-ink"
+                >
+                  (832) 402-1715
+                </a>
               </li>
-              <li className="mb-3.25 text-[14.5px] text-ink-faint italic">
-                [Email Address]
+              <li className="mb-3.25 text-[14.5px]">
+                <a
+                  href="mailto:info@webinventers.com"
+                  className="text-ink-dim transition-colors hover:text-ink"
+                >
+                  info@webinventers.com
+                </a>
               </li>
             </ul>
             <div className="mt-5.5">
@@ -177,14 +192,24 @@ export default function Footer() {
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-7 text-[13px] text-ink-faint">
           <span>© 2026 Web Inventers. All rights reserved.</span>
           <div className="flex gap-5.5">
-            {LEGAL_LINKS.map((link) => (
-              <span key={link.label} aria-disabled="true" className="inline-flex items-center gap-1.5">
-                {link.label}
-                <span className="text-[11px] font-bold tracking-[0.1em] uppercase">
-                  Soon
+            {LEGAL_LINKS.map((link) =>
+              link.href ? (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="inline-flex items-center transition-colors hover:text-accent"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <span key={link.label} aria-disabled="true" className="inline-flex items-center gap-1.5">
+                  {link.label}
+                  <span className="text-[11px] font-bold tracking-[0.1em] uppercase">
+                    Soon
+                  </span>
                 </span>
-              </span>
-            ))}
+              )
+            )}
           </div>
         </div>
       </div>
