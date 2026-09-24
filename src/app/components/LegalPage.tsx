@@ -53,10 +53,9 @@ export default function LegalPage({
 
       <main id="top">
         <div className="mx-auto w-full max-w-[1400px] px-5 pt-16 pb-20 sm:px-8 lg:pt-20 lg:pb-28">
-          {/* Capped to a comfortable reading measure rather than the full grid:
-              legal text is read line by line, and full-width lines are where
-              the eye loses its place. */}
-          <div className="mx-auto w-full max-w-[820px]">
+          {/* Full width of the site container, matching the left and right
+              edges of every other page rather than a centred column. */}
+          <div className="w-full">
             <header className="mb-12 lg:mb-16">
               <span className="mb-4 block text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
                 Legal

@@ -8,7 +8,7 @@ import Button from "./Button";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
-  { href: "#about", label: "About" },
+  { href: "/about", label: "About" },
   { href: "#services", label: "Services" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/contact", label: "Contact" },
@@ -125,13 +125,9 @@ export default function Nav({ onLight = false }: NavProps) {
 
         <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
           {NAV_LINKS.map((link) => {
-            const isHome = link.label === "Home";
-            const isPortfolio = link.label === "Portfolio";
-            const isContact = link.label === "Contact";
+            // Route links are active when the path matches their href.
             const isActive =
-              (isHome && pathname === "/") ||
-              (isPortfolio && pathname === "/portfolio") ||
-              (isContact && pathname === "/contact");
+              link.href.startsWith("/") && pathname === link.href;
 
             const linkClass = `relative rounded-full px-4 py-2.5 text-[14.5px] font-semibold transition-colors ${
               isActive
@@ -239,13 +235,8 @@ export default function Nav({ onLight = false }: NavProps) {
           </div>
           <nav className="flex flex-col items-stretch gap-1" aria-label="Mobile">
             {NAV_LINKS.map((link) => {
-              const isHome = link.label === "Home";
-              const isPortfolio = link.label === "Portfolio";
-              const isContact = link.label === "Contact";
               const isActive =
-                (isHome && pathname === "/") ||
-                (isPortfolio && pathname === "/portfolio") ||
-                (isContact && pathname === "/contact");
+                link.href.startsWith("/") && pathname === link.href;
               const isRoute = link.href.startsWith("/");
 
               return isRoute ? (

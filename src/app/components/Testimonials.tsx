@@ -111,9 +111,17 @@ const PLATFORM = {
   trustpilot: TrustpilotLogo,
 } as const;
 
+/** Spelled out beside the logo, so the source reads even where the small mark
+ *  alone would not. */
+const PLATFORM_NAME = {
+  google: "Google",
+  facebook: "Facebook",
+  trustpilot: "Trustpilot",
+} as const;
+
 function StarRating() {
   return (
-    <div className="mb-3 flex gap-0.5" aria-label="5 out of 5 stars">
+    <div className="flex gap-0.5" aria-label="5 out of 5 stars">
       {Array.from({ length: 5 }).map((_, i) => (
         <svg
           key={i}
@@ -132,9 +140,14 @@ function TestimonialCard({ t }: { t: (typeof TESTIMONIALS)[number] }) {
   const Logo = PLATFORM[t.platform];
   return (
     <div className="mb-4 rounded-[14px] border border-border bg-white p-5 transition-[border-color] duration-300 hover:border-accent/30">
-      <div className="mb-3 flex items-center gap-2">
+      <div className="mb-3 flex items-center gap-2.5">
         <Logo />
-        <StarRating />
+        <div className="flex flex-col gap-1">
+          <span className="text-[12.5px] leading-none font-semibold text-ink">
+            {PLATFORM_NAME[t.platform]}
+          </span>
+          <StarRating />
+        </div>
       </div>
       <p className="mb-4 text-[14px] leading-[1.6] text-ink">
         &ldquo;{t.quote}&rdquo;
