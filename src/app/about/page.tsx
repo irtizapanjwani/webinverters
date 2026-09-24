@@ -5,6 +5,7 @@ import PageHero from "../components/PageHero";
 import AboutStory from "../components/AboutStory";
 import OurTeam from "../components/OurTeam";
 import WhyUs from "../components/WhyUs";
+import FAQ from "../components/FAQ";
 
 export const metadata: Metadata = {
   title: "About — Web Inventers",
@@ -36,6 +37,9 @@ export default function AboutPage() {
 
         {/* The landing page's "Why Web Inventers" section, reused as-is */}
         <WhyUs />
+
+        {/* Frequently Asked Questions, from public/faqs.txt */}
+        <FAQ />
       </main>
 
       {/* Carries the "Let's build, something awesome!" scroller beneath it */}
