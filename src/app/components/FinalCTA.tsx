@@ -3,7 +3,7 @@ import { ArrowRightIcon } from "./icons";
 
 export default function FinalCTA() {
   return (
-    <section className="pt-22 pb-18 lg:pt-[180px] lg:pb-[140px]">
+    <section className="pb-14 lg:pb-24">
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         {/* Deliberately a fixed-dark spotlight panel, independent of the
             site's own light theme — it no longer blends into the page bg */}

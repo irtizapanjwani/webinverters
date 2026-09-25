@@ -180,7 +180,7 @@ export default function Testimonials() {
   const columns = distributeColumns(TESTIMONIALS, 4);
 
   return (
-    <section className="pt-14 pb-18 lg:pt-[104px] lg:pb-[140px] overflow-hidden">
+    <section className="pt-14 pb-14 lg:pt-[104px] lg:pb-24 overflow-hidden">
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         <div className="mb-10 max-w-[640px] sm:mb-16">
           <span className="mb-2.5 block text-xs font-bold tracking-[0.18em] text-accent-2 uppercase">
