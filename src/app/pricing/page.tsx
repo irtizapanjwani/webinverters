@@ -5,7 +5,7 @@ import PageHero from "../components/PageHero";
 import PricingPlans from "../components/PricingPlans";
 import FeaturedWork from "../components/FeaturedWork";
 import Testimonials from "../components/Testimonials";
-import ContactPrompt from "../components/ContactPrompt";
+import ContactSection from "../components/ContactSection";
 
 export const metadata: Metadata = {
   title: "Pricing — Web Inventers",
@@ -39,9 +39,9 @@ export default function PricingPage() {
         {/* The landing page's testimonial section, reused as-is */}
         <Testimonials />
 
-        {/* Contact Us — heading, paragraph and button to the Contact page,
-            rather than repeating the form here */}
-        <ContactPrompt />
+        {/* The Contact page's "Start the Conversation" section — the full
+            form, so visitors can reach us without leaving the page */}
+        <ContactSection as="h2" className="pb-20 lg:pb-24" />
       </main>
 
       {/* Carries the "Let's build, something awesome!" scroller beneath it */}
