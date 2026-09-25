@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import ContactForm from "../components/ContactForm";
@@ -122,6 +123,35 @@ export default function ContactPage() {
                   </div>
                 </div>
 
+                {/* Named contact card — a person to talk to, not an inbox. */}
+                <div className="mt-12 flex items-start gap-5 rounded-[20px] border border-white/10 bg-white/[0.04] p-5 sm:p-6 lg:mt-14">
+                  <Image
+                    src="/contact/mac-collins.webp"
+                    alt="Mac Collins"
+                    width={80}
+                    height={80}
+                    // Served as-is: the file is already sized and sharpened
+                    // for this slot, and re-encoding at the default quality
+                    // softened it again.
+                    unoptimized
+                    className="size-16 shrink-0 rounded-[12px] object-cover sm:size-20"
+                  />
+                  <div className="min-w-0 flex-1 self-center">
+                    <p className="text-[clamp(19px,1.8vw,24px)] leading-[1.2] font-medium text-white">
+                      Mac Collins
+                    </p>
+                    <p className="mt-2 text-[14px] leading-[1.5] text-white/75">
+                      Senior Brand Manager{" "}
+                      <span className="text-white/45">| Web Inventers</span>
+                    </p>
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-white/[0.08] text-[15px] font-bold text-white"
+                  >
+                    in
+                  </span>
+                </div>
               </div>
 
               {/* Right: white form card. The brand marquee below the form has

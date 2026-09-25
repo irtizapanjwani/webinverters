@@ -208,6 +208,11 @@ function PanelBody({ index }: { index: number }) {
  * A text panel with its own vertical line. The line spans only this panel's
  * text, and fills top to bottom while the panel is resting on screen — full
  * just as the next panel slides in, whose line then starts again from the top.
+ *
+ * The line follows the real scroll, not the smoothed copy the slides use: the
+ * stage unpins on the real scroll, so a lagging line would still be short when
+ * the section lets go. Tracking it directly, the last line reaches the end at
+ * exactly the moment the section moves on.
  */
 function TextPanel({
   index,
@@ -285,7 +290,7 @@ export default function AboutStory() {
                     className="absolute inset-x-0 h-full"
                     style={{ top: `${i * 100}%` }}
                   >
-                    <TextPanel index={i} progress={smoothed} />
+                    <TextPanel index={i} progress={scrollYProgress} />
                   </div>
                 ))}
               </motion.div>
