@@ -154,13 +154,96 @@ function VideoBackdrop({ src, poster }: TestimonialVideo) {
   );
 }
 
+/** The clips shown in the two testimonial cards, on every page that uses this
+ *  section. Web-encoded (faststart) copies with posters, so they start fast. */
+const DEFAULT_VIDEOS: TestimonialVideo[] = [
+  { src: "/about/video-2-web.mp4", poster: "/about/video-2-poster.jpg" },
+  { src: "/about/video-3-web.mp4", poster: "/about/video-3-poster.jpg" },
+];
+
+/** Award and certification badges for the strip under the cards, in display
+ *  order. The files in public/awards are made from the originals: transparent
+ *  margins trimmed, then rendered at three times their on-screen height with a
+ *  high-quality filter and a light sharpen, so they stay crisp on retina
+ *  screens and are served as-is (no second compression). Width and height are
+ *  each file's pixel size, which keeps the aspect ratio.
+ *
+ *  `kind` sets the drawn height, so the row reads evenly: round and shield
+ *  badges are tallest, wide text logos shorter, and logos on a solid colour
+ *  block shorter still, since a full block outweighs an open badge. */
+const AWARD_BADGES = [
+  { src: "/awards/cgd.webp", alt: "CGD Certified", width: 310, height: 84, kind: "wordmark" },
+  { src: "/awards/clutch-branding.webp", alt: "Clutch Top Branding Agencies 2021", width: 134, height: 144, kind: "badge" },
+  { src: "/awards/clutch-web-designers.webp", alt: "Clutch Top Web Designers 2021", width: 136, height: 144, kind: "badge" },
+  { src: "/awards/rgd-certified.webp", alt: "RGD Certified Member", width: 387, height: 84, kind: "wordmark" },
+  { src: "/awards/semrush.webp", alt: "Semrush Certified Agency Partner", width: 146, height: 144, kind: "badge" },
+  { src: "/awards/most-reviewed.webp", alt: "Most Reviewed Digital Marketing Agency", width: 99, height: 144, kind: "badge" },
+  { src: "/awards/top-choice.webp", alt: "Top Choice Award 2022, Mark of Excellence", width: 134, height: 144, kind: "badge" },
+  { src: "/awards/local-excellence.webp", alt: "Local Excellence 2022 Winner", width: 142, height: 144, kind: "badge" },
+  { src: "/awards/rgd.webp", alt: "RGD, Designers Supporting Designers", width: 241, height: 96, kind: "plate" },
+] as const;
+
+const BADGE_HEIGHT = {
+  badge: "h-10 lg:h-[52px]",
+  wordmark: "h-5 lg:h-6",
+  plate: "h-6 lg:h-7",
+} as const;
+
+/** Times the badge list repeats inside each half of the loop. Nine badges at
+ *  a fixed gap come to about 1,150px — narrower than the container — so one
+ *  run would let the empty end of the track slide into view. Two runs make
+ *  each half wider than any screen the container reaches. */
+const RUNS_PER_HALF = 2;
+
+/**
+ * The badges scrolling right to left under the cards, in a constant loop.
+ *
+ * Every badge is separated by the same fixed gap, including across the loop's
+ * seam: each run ends with right padding equal to the gap, so the last badge
+ * of one run sits exactly one gap from the first of the next. Two identical
+ * halves slide by exactly -50% (the shared marquee keyframes), so the loop has
+ * no visible restart. The track is promoted to its own GPU layer, so the
+ * motion is a pure compositor slide with no repaints.
+ *
+ * Only the first run is exposed to assistive tech, so each badge is read once.
+ * Hover pauses it; reduced motion freezes it via the global rule.
+ */
+function AwardsMarquee() {
+  return (
+    <div className="group mt-12 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_6%,#000_94%,transparent)] lg:mt-14">
+      <div className="flex w-max animate-marquee [animation-duration:32s] [will-change:transform] group-hover:[animation-play-state:paused]">
+        {Array.from({ length: RUNS_PER_HALF * 2 }, (_, run) => (
+          <ul
+            key={run}
+            aria-hidden={run > 0 || undefined}
+            aria-label={run === 0 ? "Awards and certifications" : undefined}
+            className="flex shrink-0 items-center gap-10 pr-10 lg:gap-14 lg:pr-14"
+          >
+            {AWARD_BADGES.map((badge) => (
+              <li key={badge.src} className="shrink-0">
+                <Image
+                  src={badge.src}
+                  alt={run === 0 ? badge.alt : ""}
+                  width={badge.width}
+                  height={badge.height}
+                  unoptimized
+                  className={`${BADGE_HEIGHT[badge.kind]} w-auto`}
+                />
+              </li>
+            ))}
+          </ul>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 type WhyUsProps = {
-  /** One clip per testimonial card, in order. Omit to keep the plain cards
-   *  (the landing page does). */
+  /** One clip per testimonial card, in order. Defaults to the shared clips. */
   testimonialVideos?: TestimonialVideo[];
 };
 
-export default function WhyUs({ testimonialVideos }: WhyUsProps = {}) {
+export default function WhyUs({ testimonialVideos = DEFAULT_VIDEOS }: WhyUsProps = {}) {
   const [active, setActive] = useState<number | null>(null);
 
   const contentStyle = (i: number) => {
@@ -281,6 +364,8 @@ export default function WhyUs({ testimonialVideos }: WhyUsProps = {}) {
             </div>
           </div>
         </div>
+
+        <AwardsMarquee />
       </div>
     </section>
   );
