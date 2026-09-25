@@ -321,3 +321,61 @@
     stroke-dashoffset: 0;
   }
 }
+
+/* ---------- Phone number field (intl-tel-input) ----------
+   The library's colours re-pointed at the site palette. Its variables live on
+   :root, which also reaches the country list — that is mounted on <body>,
+   outside the field, so it can escape the popup's scrolling card. */
+:root {
+  --iti-hover-color: color-mix(in oklab, var(--color-accent) 8%, transparent);
+  --iti-border-color: var(--color-border-strong);
+  --iti-icon-color: var(--color-ink-faint);
+  --iti-spacer-horizontal: 12px;
+}
+
+.iti__selected-dial-code {
+  color: var(--color-ink);
+  font-size: 15px;
+}
+
+/* The open list: the site's card look rather than the library's 3px box. */
+.iti--detached-country-selector .iti__country-selector {
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 18px 44px -14px rgba(11, 17, 32, 0.28);
+}
+
+.iti__search-input,
+.iti__country-list {
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  color: var(--color-ink);
+}
+
+.iti__search-input {
+  outline: none;
+}
+
+/* Taller than the library's 185px, closer to the reference. */
+.iti--inline-country-selector .iti__country-list {
+  max-height: 264px;
+}
+
+.iti__country {
+  padding-inline: 14px;
+}
+
+.iti__dial-code {
+  color: var(--color-ink-faint);
+}
+
+/* The keyboard-highlighted row uses the accent tint, like the site's other
+   dropdowns. */
+.iti__country.iti__highlight {
+  background-color: color-mix(in oklab, var(--color-accent) 10%, transparent);
+}
+
+/* Phones: the full-screen picker dims with the site's ink, not flat black. */
+.iti--fullscreen-popup.iti--detached-country-selector {
+  background-color: color-mix(in oklab, var(--color-ink) 60%, transparent);
+}

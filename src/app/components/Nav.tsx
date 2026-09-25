@@ -8,9 +8,10 @@ import Button from "./Button";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
+  { href: "/about", label: "About Us" },
   { href: "#services", label: "Services" },
   { href: "/portfolio", label: "Portfolio" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -92,7 +93,7 @@ export default function Nav({ onLight = false }: NavProps) {
     <header
       className={`sticky z-100 w-full border-b transition-[background-color,border-color,border-radius,top] duration-300 ${
         scrolled
-          ? "top-4 border-gray-400 bg-white/50 backdrop-blur-xl py-4 rounded-full mx-auto max-w-[calc(100vw-32px)] lg:max-w-[850px] overflow-hidden"
+          ? "top-4 border-gray-400 bg-white/50 backdrop-blur-xl py-4 rounded-full mx-auto max-w-[calc(100vw-32px)] lg:max-w-[980px] overflow-hidden"
           : "top-0 border-transparent py-3.5"
       }`}
     >
@@ -129,9 +130,10 @@ export default function Nav({ onLight = false }: NavProps) {
             const isActive =
               link.href.startsWith("/") && pathname === link.href;
 
-            const linkClass = `relative rounded-full px-4 py-2.5 text-[14.5px] font-semibold transition-colors ${
+            // px-3 below xl keeps six links on one line on small laptops.
+            const linkClass = `relative rounded-full px-3 py-2.5 text-[14.5px] font-semibold transition-colors xl:px-4 ${
               isActive
-                ? `after:absolute after:bottom-1 after:left-4 after:right-4 after:h-0.5 after:rounded-sm ${
+                ? `after:absolute after:bottom-1 after:left-3 after:right-3 after:h-0.5 after:rounded-sm xl:after:left-4 xl:after:right-4 ${
                     darkText
                       ? "text-accent after:bg-accent"
                       : "text-white after:bg-white"
@@ -167,7 +169,7 @@ export default function Nav({ onLight = false }: NavProps) {
 
         <div className="flex items-center gap-3.5">
           {scrolled ? null : (
-            <div className="hidden lg:block">
+            <div className="hidden xl:block">
               <Button
                 href="/portfolio"
                 variant="ghost"

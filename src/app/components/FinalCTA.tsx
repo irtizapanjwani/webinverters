@@ -23,7 +23,7 @@ export default function FinalCTA() {
             there. No pressure, just a straight conversation about your goals.
           </p>
           <div className="relative flex flex-wrap justify-center gap-4">
-            <Button href="#start-project">
+            <Button href="/contact">
               Start Your Project
               <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-0.75" />
             </Button>

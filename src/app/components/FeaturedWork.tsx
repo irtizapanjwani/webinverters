@@ -102,7 +102,10 @@ const PROJECTS = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-export default function FeaturedWork() {
+/** `compact` trims the section's own vertical padding for pages where it sits
+ *  between other padded sections (the Pricing page), so the gaps above and
+ *  below don't stack up. The landing page keeps the full spacing. */
+export default function FeaturedWork({ compact = false }: { compact?: boolean } = {}) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>("ALL");
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
@@ -115,7 +118,7 @@ export default function FeaturedWork() {
       : PROJECTS.filter((p) => p.category === activeCategory);
 
   return (
-    <section className="py-18 lg:py-[140px]" id="work">
+    <section className={compact ? "py-12 lg:py-14" : "py-18 lg:py-[140px]"} id="work">
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         <div className="mb-10 sm:mb-16">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
