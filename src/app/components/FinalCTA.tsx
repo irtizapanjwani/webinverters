@@ -8,7 +8,6 @@ export default function FinalCTA() {
         {/* Deliberately a fixed-dark spotlight panel, independent of the
             site's own light theme — it no longer blends into the page bg */}
         <div
-          id="start-project"
           className="relative overflow-hidden rounded-[28px] border border-white/10 bg-gradient-to-b from-[#0B1330] to-[#05070C] px-6 py-12 text-center sm:px-14 sm:py-20 lg:py-24"
         >
           <div

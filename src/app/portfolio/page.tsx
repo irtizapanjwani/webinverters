@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
+import ContactSection from "../components/ContactSection";
 import PageHero from "../components/PageHero";
 
 const CATEGORIES = ["ALL", "BRAND", "MARKETING", "PRODUCT"] as const;
@@ -310,6 +311,10 @@ export default function PortfolioPage() {
             </div>
           </div>
         </div>
+
+        {/* The Contact page's "Start the Conversation" form, above the footer on
+            every page */}
+        <ContactSection as="h2" className="pb-20 lg:pb-24" />
       </main>
       <Footer />
     </div>

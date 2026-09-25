@@ -1,5 +1,6 @@
 import Nav from "./Nav";
 import Footer from "./Footer";
+import ContactSection from "./ContactSection";
 
 export type LegalBlock =
   | { kind: "p"; text: string }
@@ -159,6 +160,10 @@ export default function LegalPage({
             ))}
           </div>
         </div>
+
+        {/* The Contact page's "Start the Conversation" form, above the footer on
+            every page */}
+        <ContactSection as="h2" className="pb-20 lg:pb-24" />
       </main>
 
       <Footer />

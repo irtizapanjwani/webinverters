@@ -10,6 +10,7 @@ import Process from "./components/Process";
 import Testimonials from "./components/Testimonials";
 import FinalCTA from "./components/FinalCTA";
 import Footer from "./components/Footer";
+import ContactSection from "./components/ContactSection";
 
 export default function Home() {
   return (
@@ -33,6 +34,9 @@ export default function Home() {
         <Process />
         <Testimonials />
         <FinalCTA />
+        {/* The Contact page's "Start the Conversation" form, above the footer on
+            every page */}
+        <ContactSection as="h2" className="pb-20 lg:pb-24" />
       </main>
       <Footer />
     </div>
