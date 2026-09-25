@@ -102,21 +102,28 @@ export default function Nav({ onLight = false }: NavProps) {
           <span className={`relative block aspect-[1090/208] ${
             scrolled ? "h-7 sm:h-8" : "h-6 sm:h-8 lg:h-10 xl:h-12"
           }`}>
+            {/* Dark-text logo, for light surfaces and the scrolled pill */}
             <Image
               src="/web-inverters-logo-dark.png"
               alt="Web Inventers logo"
               fill
               sizes="294px"
-              className="object-contain"
+              className={`object-contain transition-opacity duration-300 ${
+                darkText ? "opacity-100" : "opacity-0"
+              }`}
               priority
             />
+            {/* The brand's light logo (public/logos/PNG-02.png) for dark
+                backgrounds. The file in use is PNG-02 trimmed and placed on
+                the dark logo's exact canvas, so the two sit in the same spot
+                at the same size and cross-fade cleanly. */}
             <Image
-              src="/web-inverters-logo-dark.png"
+              src="/logos/web-inventers-logo-light.png"
               alt=""
               aria-hidden="true"
               fill
               sizes="294px"
-              className={`object-contain brightness-0 invert transition-opacity duration-300 [clip-path:inset(0_0_0_17%)] ${
+              className={`object-contain transition-opacity duration-300 ${
                 darkText ? "opacity-0" : "opacity-100"
               }`}
               priority
