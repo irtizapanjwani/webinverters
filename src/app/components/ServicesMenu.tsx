@@ -122,9 +122,8 @@ type ServicesMenuProps = {
 
 /**
  * The navbar's "Services" item and its mega menu: a full-width white panel
- * behind the navbar with a column per service — a gradient card and the
- * service's specialities as a list — and a contact row along the bottom. The
- * page behind dims and blurs.
+ * behind the navbar with a gradient card per service and a contact row along
+ * the bottom. The page behind dims and blurs.
  *
  * The panel is portalled to <body>. The scrolled navbar is a clipped glass
  * pill, and its backdrop blur also makes it the containing block for fixed
@@ -289,7 +288,7 @@ export default function ServicesMenu({ className, headerRef, onOpenChange }: Ser
                       All Services
                     </p>
 
-                    <div className="grid grid-cols-3 gap-x-6 gap-y-8 xl:grid-cols-6 xl:gap-8">
+                    <div className="grid grid-cols-3 gap-x-6 gap-y-8 xl:grid-cols-6 xl:gap-5 2xl:gap-8">
                       {SERVICES.map((service, i) => {
                         const link = serviceLink(service.slug);
                         const go = (e: React.MouseEvent) => {
@@ -304,29 +303,14 @@ export default function ServicesMenu({ className, headerRef, onOpenChange }: Ser
                               className={`group relative flex h-[92px] items-center justify-between gap-3 overflow-hidden rounded-[12px] px-4 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] 2xl:px-5 ${CARD_SHADES[i % CARD_SHADES.length]}`}
                             >
                               <span
-                                className="min-w-0 font-display text-[clamp(13.5px,1vw,16px)] leading-[1.2] font-semibold tracking-[-0.01em] [overflow-wrap:normal]"
+                                className="min-w-0 font-display text-[clamp(13px,0.95vw,16px)] leading-[1.2] font-semibold tracking-[-0.01em] [overflow-wrap:normal]"
                               >
                                 {service.menuTitle}
                               </span>
-                              <span className="flex size-11 shrink-0 items-center justify-center rounded-[12px] border border-white/30 bg-white/[0.06] transition-colors duration-300 group-hover:bg-white/20 2xl:size-[58px]">
-                                <ArrowUpRight />
+                              <span className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-white/30 bg-white/[0.06] transition-colors duration-300 group-hover:bg-white/20 2xl:size-11 2xl:rounded-[12px]">
+                                <ArrowUpRight className="size-3.5" />
                               </span>
                             </Link>
-
-                            <ul className="mt-6">
-                              {service.tags.map((tag) => (
-                                <li key={tag}>
-                                  <Link
-                                    href={link.href}
-                                    onClick={go}
-                                    className="flex items-center justify-between gap-3 border-b border-border py-3 text-[14.5px] leading-[1.4] text-ink-dim transition-colors hover:text-accent"
-                                  >
-                                    {tag}
-                                    <ArrowUpRight className="size-3.5 shrink-0" />
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
                           </div>
                         );
                       })}
