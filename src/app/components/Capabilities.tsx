@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { SERVICES } from "./serviceData";
 import { SERVICE_SHADES } from "./serviceShades";
@@ -157,6 +158,16 @@ function PlatformsCard() {
 
 const blockId = (slug: string) => `capability-${slug}`;
 
+/** The button on each service card, e.g. "All Web Design Services". */
+const CTA_LABELS: Record<string, string> = {
+  "web-design": "All Web Design Services",
+  "mobile-apps": "All Mobile App Services",
+  ecommerce: "All E-commerce Services",
+  branding: "All Branding Services",
+  seo: "All SEO Services",
+  "social-media": "All Social Media Services",
+};
+
 /**
  * "Our Capabilities" on the Services page. The left column lists every service
  * and stays in view while the right column scrolls through them: for each
@@ -280,13 +291,15 @@ export default function Capabilities() {
                     <p className="mb-7 max-w-[440px] text-[15px] leading-[1.65] text-white/80">
                       {service.description}
                     </p>
-                    <a
-                      href="#start-project"
+                    {/* Opens this service's tab in the Services section on the
+                        home page, which lists everything it covers. */}
+                    <Link
+                      href={`/#service-${service.slug}`}
                       className="inline-flex w-fit items-center gap-2 rounded-full border border-white/30 bg-white/[0.06] px-5 py-2.5 text-[14.5px] font-semibold text-white transition-colors duration-300 hover:bg-white hover:text-ink"
                     >
-                      Discuss your project
+                      {CTA_LABELS[service.slug] ?? `All ${service.shortTitle} Services`}
                       <ArrowUpRight className="size-3.5" />
-                    </a>
+                    </Link>
                   </div>
 
                   {/* The illustration is transparent, so it sits straight on
