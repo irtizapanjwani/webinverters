@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const STEPS = [
   { num: "01", title: "Discover", desc: "We dig into your business, users, and goals." },
@@ -19,13 +19,13 @@ const R = 23;
  *  actually takes or the stages start overlapping again. */
 const ARC_MS = 600;
 const LINE_MS = 600;
-/** A beat on the last step before the pulse jumps back to the first, so the
- *  loop reads as "and round again" rather than a glitch. */
-const LOOP_PAUSE_MS = 700;
+/** How long the finished chain — every circle and line blue — holds before
+ *  it clears, and the short blank beat before it starts again from step 1. */
+const HOLD_MS = 1600;
+const CLEAR_MS = 500;
 
-/** Which single segment is lit right now. Only one exists at a time: the pulse
- *  travels, it does not accumulate. */
-type Stage = { i: number; phase: "arc" | "line" };
+/** One segment of the chain: a circle's ring, or the line leaving it. */
+type Segment = { i: number; phase: "arc" | "line" };
 
 /** Whether step `i` is joined to the next one by a visible connector.
  *
@@ -44,7 +44,12 @@ export default function Process() {
   const gridRef = useRef<HTMLDivElement>(null);
   const circleRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [positions, setPositions] = useState<{ x: number; y: number }[]>([]);
-  const [stage, setStage] = useState<Stage | null>(null);
+  /** How far the chain has been drawn: segments before `progress` stay lit,
+   *  the one at `progress` is drawing now, and the rest are still dark. -1
+   *  means nothing is lit. `lap` changes on every loop so the drawing
+   *  animations restart. */
+  const [progress, setProgress] = useState(-1);
+  const [lap, setLap] = useState(0);
   const [animate, setAnimate] = useState(false);
   const reduce = useReducedMotion();
 
@@ -78,38 +83,58 @@ export default function Process() {
     return () => observer.disconnect();
   }, [reduce]);
 
+  /** The chain in drawing order: circle 1, its line, circle 2, its line, and
+   *  so on. A step whose connector was skipped (end of a wrapped row) goes
+   *  straight to the next circle. */
+  const sequence = useMemo(() => {
+    const seq: Segment[] = [];
+    positions.forEach((_, i) => {
+      seq.push({ i, phase: "arc" });
+      if (connects(positions, i)) seq.push({ i, phase: "line" });
+    });
+    return seq;
+  }, [positions]);
+
+  /** "done" stays blue, "drawing" is animating in now, "off" is still dark. */
+  const segmentState = (i: number, phase: Segment["phase"]) => {
+    const k = sequence.findIndex((s) => s.i === i && s.phase === phase);
+    if (k < 0 || progress < 0 || k > progress) return "off";
+    return k < progress ? "done" : "drawing";
+  };
+
   useEffect(() => {
-    if (!animate || reduce || positions.length < 2) return;
-    const N = positions.length;
+    if (!animate || reduce || sequence.length < 2) return;
     let timer: ReturnType<typeof setTimeout>;
     let cancelled = false;
 
-    /** Where the pulse goes after the current stage finishes, and how long it
-     *  has to wait. A circle hands to its outgoing line; a line hands to the
-     *  next circle; the last circle wraps back to the first. A step whose
-     *  connector was skipped (end of a wrapped row) hands straight to the next
-     *  circle, so there is no pause where a line would have been. */
-    const next = (s: Stage): { to: Stage; delay: number } => {
-      if (s.phase === "line") return { to: { i: s.i + 1, phase: "arc" }, delay: LINE_MS };
-      if (connects(positions, s.i)) return { to: { i: s.i, phase: "line" }, delay: ARC_MS };
-      if (s.i < N - 1) return { to: { i: s.i + 1, phase: "arc" }, delay: ARC_MS };
-      return { to: { i: 0, phase: "arc" }, delay: ARC_MS + LOOP_PAUSE_MS };
-    };
-
-    const run = (s: Stage) => {
+    // Each segment draws in and then stays lit, so the blue builds up from
+    // step 1 to the last step. Once the whole chain is lit it holds, clears,
+    // and the next lap starts again from step 1.
+    const step = (k: number) => {
       if (cancelled) return;
-      setStage(s);
-      const { to, delay } = next(s);
-      timer = setTimeout(() => run(to), delay);
+      setProgress(k);
+      if (k < sequence.length - 1) {
+        const ms = sequence[k].phase === "line" ? LINE_MS : ARC_MS;
+        timer = setTimeout(() => step(k + 1), ms);
+        return;
+      }
+      timer = setTimeout(() => {
+        if (cancelled) return;
+        setProgress(-1);
+        timer = setTimeout(() => {
+          setLap((l) => l + 1);
+          step(0);
+        }, CLEAR_MS);
+      }, ARC_MS + HOLD_MS);
     };
 
-    run({ i: 0, phase: "arc" });
+    step(0);
 
     return () => {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [animate, reduce, positions]);
+  }, [animate, reduce, sequence]);
 
   const box = positions.length >= 2
     ? { w: Math.max(...positions.map((p) => p.x)) + R + 10, h: Math.max(...positions.map((p) => p.y)) + R + 10 }
@@ -134,22 +159,22 @@ export default function Process() {
               {positions.map((p, i) => {
                 if (!connects(positions, i)) return null;
                 const d = `M ${p.x + R} ${p.y} L ${positions[i + 1].x - R} ${positions[i + 1].y}`;
-                const lit = stage?.i === i && stage.phase === "line";
+                const state = segmentState(i, "line");
                 return (
                   <g key={i}>
                     {/* The track the line will travel, always visible so the
                         steps read as connected before the animation reaches
                         them. */}
                     <path d={d} fill="none" stroke="rgba(27,90,240,0.12)" strokeWidth="1.5" />
-                    {/* The travelling line itself. Held fully dashed-out until
-                        the schedule adds `draw`, which runs the offset to 0. */}
+                    {/* The line itself. Dark until its turn, then `draw` runs
+                        the offset to 0, and it stays drawn until the lap ends. */}
                     <path
-                      /* `key` carries the lit state so React remounts the node
-                         on every pass. Re-adding the class to a surviving
-                         element does not reliably restart a CSS animation, and
-                         this one has to restart on each lap of the loop. */
-                      key={lit ? "on" : "off"}
-                      className={lit ? "draw" : ""}
+                      /* `key` carries the state and lap so React remounts the
+                         node each time it starts drawing. Re-adding the class
+                         to a surviving element does not reliably restart a CSS
+                         animation, and this one has to restart every lap. */
+                      key={`${state}-${lap}`}
+                      className={state === "drawing" ? "draw" : ""}
                       d={d}
                       fill="none"
                       stroke="#1b5af0"
@@ -157,7 +182,7 @@ export default function Process() {
                       strokeLinecap="round"
                       pathLength="1"
                       strokeDasharray="1"
-                      strokeDashoffset="1"
+                      strokeDashoffset={state === "done" ? 0 : 1}
                     />
                   </g>
                 );
@@ -188,9 +213,12 @@ export default function Process() {
               {positions.map((p, i) => {
                 const cx = p.x;
                 const cy = p.y;
-                // The ring is lit only while the pulse is on this circle. Once
-                // it moves on, this clears — the trail does not stay behind.
-                const lit = stage?.i === i;
+                // The ring lights when the chain reaches this circle and stays
+                // lit for the rest of the lap.
+                const state = segmentState(i, "arc");
+                const lit = state !== "off";
+                const arcClass = state === "drawing" ? "draw" : "";
+                const arcOffset = state === "done" ? 0 : 1;
                 return (
                   <g key={i}>
                     {/* Circle outline — lights up blue when active */}
@@ -203,19 +231,19 @@ export default function Process() {
 
                     {/* Top arc: left edge → along top of circle → right edge */}
                     <path
-                      key={`t-${lit ? "on" : "off"}`}
-                      className={lit ? "draw" : ""}
+                      key={`t-${state}-${lap}`}
+                      className={arcClass}
                       d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`}
                       fill="none" stroke="#1b5af0" strokeWidth="2" strokeLinecap="round"
-                      pathLength="1" strokeDasharray="1" strokeDashoffset="1"
+                      pathLength="1" strokeDasharray="1" strokeDashoffset={arcOffset}
                     />
                     {/* Bottom arc: left edge → along bottom of circle → right edge */}
                     <path
-                      key={`b-${lit ? "on" : "off"}`}
-                      className={lit ? "draw" : ""}
+                      key={`b-${state}-${lap}`}
+                      className={arcClass}
                       d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 0 ${cx + R} ${cy}`}
                       fill="none" stroke="#1b5af0" strokeWidth="2" strokeLinecap="round"
-                      pathLength="1" strokeDasharray="1" strokeDashoffset="1"
+                      pathLength="1" strokeDasharray="1" strokeDashoffset={arcOffset}
                     />
                   </g>
                 );
