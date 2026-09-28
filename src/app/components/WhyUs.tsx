@@ -83,19 +83,39 @@ const CARD_CLASS =
   "why-card group relative overflow-hidden rounded-[18px] border border-border bg-bg-alt p-6 sm:p-7";
 
 /** Dark trust cards: the site's spotlight-panel base (#0B1330 → #05070C, as on
- *  the contact panel and "Have a Project in Mind?") with a Signal Blue sweep.
- *  Each card's sweep enters from a different corner, like the reference, so
- *  the three read as a set rather than three copies. */
+ *  the contact panel and "Have a Project in Mind?") lit by several saturated
+ *  pools of the brand blues — Signal Blue, a brighter azure, cyan and indigo —
+ *  so the colour reads vivid rather than a single dim wash. Each card's light
+ *  enters from a different corner, so the three read as a set rather than
+ *  three copies. A soft sheen along the top and a lit inner edge give the
+ *  glassy finish. */
 // min-h holds the row at the height it had before the badge images were
 // scaled down — the images shrank, the cards should not have.
 const DARK_CARD_CLASS =
-  "why-card group relative min-h-[234px] overflow-hidden rounded-[18px] border border-white/10 p-6 sm:p-7";
+  "why-card group relative min-h-[234px] overflow-hidden rounded-[18px] border border-white/15 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_18px_40px_-18px_rgba(27,90,240,0.55)] sm:p-7 before:pointer-events-none before:absolute before:inset-0 before:bg-[linear-gradient(180deg,rgba(255,255,255,0.10),transparent_38%)] before:content-['']";
 
 const DARK_SHADES = [
-  "bg-[radial-gradient(120%_95%_at_88%_12%,rgba(27,90,240,0.42),transparent_62%),linear-gradient(135deg,#0B1330,#05070C)]",
-  "bg-[radial-gradient(110%_100%_at_50%_0%,rgba(27,90,240,0.5),transparent_64%),linear-gradient(160deg,#0B1330,#05070C)]",
-  "bg-[radial-gradient(120%_100%_at_14%_88%,rgba(27,90,240,0.55),transparent_62%),linear-gradient(135deg,#05070C,#0B1330)]",
+  "bg-[radial-gradient(95%_120%_at_100%_0%,#3B82F6_0%,rgba(37,99,235,0.85)_22%,transparent_62%),radial-gradient(80%_110%_at_58%_62%,rgba(99,102,241,0.75),transparent_66%),radial-gradient(70%_95%_at_0%_100%,rgba(6,182,212,0.7),transparent_64%),linear-gradient(135deg,#0F1D4A,#060B1F)]",
+  "bg-[radial-gradient(110%_95%_at_50%_0%,#3B82F6_0%,rgba(37,99,235,0.85)_24%,transparent_64%),radial-gradient(75%_100%_at_100%_100%,rgba(139,92,246,0.75),transparent_64%),radial-gradient(65%_90%_at_0%_90%,rgba(6,182,212,0.6),transparent_62%),linear-gradient(160deg,#0F1D4A,#060B1F)]",
+  "bg-[radial-gradient(100%_120%_at_0%_100%,#3B82F6_0%,rgba(37,99,235,0.85)_22%,transparent_62%),radial-gradient(75%_100%_at_100%_0%,rgba(6,182,212,0.75),transparent_62%),radial-gradient(75%_95%_at_55%_45%,rgba(99,102,241,0.6),transparent_66%),linear-gradient(135deg,#060B1F,#0F1D4A)]",
 ];
+
+/** Five filled stars in review gold. The stars are drawn for sight only;
+ *  screen readers get the rating as text. */
+function FiveStars() {
+  return (
+    <>
+      <span className="flex gap-0.5 text-[#FBBF24]" aria-hidden="true">
+        {Array.from({ length: 5 }, (_, i) => (
+          <svg key={i} viewBox="0 0 20 20" fill="currentColor" className="size-4">
+            <path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9L10 1.5z" />
+          </svg>
+        ))}
+      </span>
+      <span className="sr-only">Rated 5 out of 5</span>
+    </>
+  );
+}
 
 type TestimonialVideo = {
   src: string;
@@ -246,11 +266,14 @@ type WhyUsProps = {
 export default function WhyUs({ testimonialVideos = DEFAULT_VIDEOS }: WhyUsProps = {}) {
   const [active, setActive] = useState<number | null>(null);
 
-  const contentStyle = (i: number) => {
+  /** Hover lift for a card's content. `dim` also fades it to 75% until
+   *  hovered — kept for the video cards, while the trust cards always show at
+   *  full strength. */
+  const contentStyle = (i: number, dim = true) => {
     const isActive = active === i;
     return {
       transform: isActive ? "scale(1) translateY(0)" : "scale(0.97) translateY(3px)",
-      opacity: isActive ? 1 : 0.75,
+      opacity: isActive || !dim ? 1 : 0.75,
     };
   };
 
@@ -317,14 +340,22 @@ export default function WhyUs({ testimonialVideos = DEFAULT_VIDEOS }: WhyUsProps
           >
             <div
               className="relative z-10 flex h-full flex-col justify-center gap-4 transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
-              style={contentStyle(2)}
+              style={contentStyle(2, false)}
             >
-              <div className="flex items-center">
+              <div className="flex items-center justify-between gap-4">
                 <GoogleWordmark />
+                <div className="flex flex-col items-end gap-1 text-right">
+                  <span className="text-[15px] font-semibold text-white">87 Reviews</span>
+                  <FiveStars />
+                </div>
               </div>
-              <div className="h-px bg-white/15" />
-              <div className="flex items-center">
+              <div className="h-px bg-white/20" />
+              <div className="flex items-center justify-between gap-4">
                 <TrustpilotWordmark />
+                <div className="flex flex-col items-end gap-1 text-right">
+                  <span className="text-[15px] font-semibold text-white">97+ verified reviews</span>
+                  <FiveStars />
+                </div>
               </div>
             </div>
           </div>
@@ -337,7 +368,7 @@ export default function WhyUs({ testimonialVideos = DEFAULT_VIDEOS }: WhyUsProps
           >
             <div
               className="relative z-10 flex h-full flex-col items-center justify-center gap-5 text-center transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
-              style={contentStyle(3)}
+              style={contentStyle(3, false)}
             >
               <BbbSeal />
               <p className="text-[15px] leading-[1.45] font-semibold text-white">
@@ -354,7 +385,7 @@ export default function WhyUs({ testimonialVideos = DEFAULT_VIDEOS }: WhyUsProps
           >
             <div
               className="relative z-10 flex h-full flex-col items-center justify-center gap-4 text-center transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
-              style={contentStyle(4)}
+              style={contentStyle(4, false)}
             >
               <ClutchBadges />
               <h3 className="font-display text-[19px] leading-[1.3] font-bold text-white">
