@@ -10,8 +10,8 @@ import ServicesMenu, { MobileServicesList } from "./ServicesMenu";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About Us" },
-  // Opens the services dropdown rather than linking anywhere itself.
-  { href: "#services", label: "Services", menu: true },
+  // Links to the Services page; hovering it also opens the services dropdown.
+  { href: "/services", label: "Services", menu: true },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
@@ -163,6 +163,12 @@ export default function Nav({ onLight = false }: NavProps) {
                 <ServicesMenu
                   key={link.label}
                   className={linkClass}
+                  chevronClassName={
+                    isActive
+                      ? darkText ? "text-accent" : "text-white"
+                      : darkText ? "text-ink-dim hover:text-accent" : "text-white/85 hover:text-white"
+                  }
+                  active={isActive}
                   headerRef={headerRef}
                   onOpenChange={setServicesOpen}
                 />
@@ -270,7 +276,8 @@ export default function Nav({ onLight = false }: NavProps) {
                   <MobileServicesList
                     key={link.label}
                     onNavigate={closeMenu}
-                    className="px-2 py-4 text-xl font-semibold text-ink-dim"
+                    active={isActive}
+                    className={`px-2 py-4 text-xl font-semibold ${isActive ? "text-accent" : "text-ink-dim"}`}
                   />
                 );
               }

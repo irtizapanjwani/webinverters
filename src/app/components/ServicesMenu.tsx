@@ -110,9 +110,13 @@ function useServiceLink() {
 }
 
 type ServicesMenuProps = {
-  /** Classes for the trigger, shared with the other navbar links so it matches
-   *  their colour, size and hover state. */
+  /** Classes for the "Services" link, shared with the other navbar links so it
+   *  matches their colour, size, hover and active state. */
   className: string;
+  /** Colour classes for the arrow button beside the link, matching the link. */
+  chevronClassName: string;
+  /** The Services page is the current page. */
+  active: boolean;
   /** The navbar element — the panel's content starts just below it. */
   headerRef: React.RefObject<HTMLElement | null>;
   /** Tells the navbar the panel is open, so it switches to dark text over the
@@ -129,12 +133,19 @@ type ServicesMenuProps = {
  * pill, and its backdrop blur also makes it the containing block for fixed
  * children — so a panel inside it would be cut off at the pill's edge.
  *
- * Opens on hover (with a short grace period for moving onto the panel) and on
- * click or Enter/Space. Escape, clicking the dimmed page, focus moving
- * elsewhere, or following one of its links closes it; Escape returns focus to
- * the trigger.
+ * "Services" itself is a link to the Services page. Hovering it (or the arrow
+ * beside it) opens the panel, with a short grace period for moving onto the
+ * panel. The arrow is a button, so keyboard users can open the panel too.
+ * Escape, clicking the dimmed page, focus moving elsewhere, or following one
+ * of its links closes it; Escape returns focus to the arrow.
  */
-export default function ServicesMenu({ className, headerRef, onOpenChange }: ServicesMenuProps) {
+export default function ServicesMenu({
+  className,
+  chevronClassName,
+  active,
+  headerRef,
+  onOpenChange,
+}: ServicesMenuProps) {
   const [open, setOpenState] = useState(false);
   const [contentTop, setContentTop] = useState(96);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -218,37 +229,45 @@ export default function ServicesMenu({ className, headerRef, onOpenChange }: Ser
 
   return (
     <>
-      <button
-        ref={triggerRef}
-        type="button"
-        aria-expanded={open}
-        aria-controls={panelId}
-        onClick={(e) => {
-          // A mouse click lands after hover has already opened the panel, so
-          // it only keeps it open — toggling would shut it under the pointer.
-          if (e.detail > 0) {
+      <span className="inline-flex items-center" onMouseEnter={openNow} onMouseLeave={closeSoon}>
+        <Link
+          href="/services"
+          aria-current={active ? "page" : undefined}
+          onClick={close}
+          className={className}
+        >
+          Services
+        </Link>
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-label={open ? "Hide all services" : "Show all services"}
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={(e) => {
+            // A mouse click lands after hover has already opened the panel, so
+            // it only keeps it open — toggling would shut it under the pointer.
+            if (e.detail > 0) {
+              openNow();
+              return;
+            }
+            // Enter/Space toggles. Opening from the keyboard moves focus into
+            // the panel so its links are next in the tab order (the panel
+            // lives at the end of <body>).
+            if (open) {
+              close();
+              return;
+            }
             openNow();
-            return;
-          }
-          // Enter/Space toggles. Opening from the keyboard moves focus into
-          // the panel so its links are next in the tab order (the panel lives
-          // at the end of <body>).
-          if (open) {
-            close();
-            return;
-          }
-          openNow();
-          requestAnimationFrame(() =>
-            panelRef.current?.querySelector<HTMLElement>("a")?.focus({ preventScroll: true })
-          );
-        }}
-        onMouseEnter={openNow}
-        onMouseLeave={closeSoon}
-        className={`${className} inline-flex items-center gap-1`}
-      >
-        Services
-        <Chevron open={open} />
-      </button>
+            requestAnimationFrame(() =>
+              panelRef.current?.querySelector<HTMLElement>("a")?.focus({ preventScroll: true })
+            );
+          }}
+          className={`-ml-2.5 flex size-7 items-center justify-center rounded-full transition-colors xl:-ml-3 ${chevronClassName}`}
+        >
+          <Chevron open={open} />
+        </button>
+      </span>
 
       {isClient &&
         createPortal(
@@ -360,15 +379,17 @@ export default function ServicesMenu({ className, headerRef, onOpenChange }: Ser
 }
 
 /**
- * The mobile menu's "Services" row: a disclosure that lists the same services
- * as plain links under it.
+ * The mobile menu's "Services" row: "Services" links to the Services page, and
+ * the arrow beside it expands the same services as plain links under it.
  */
 export function MobileServicesList({
   onNavigate,
   className,
+  active,
 }: {
   onNavigate: () => void;
   className: string;
+  active: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const listId = useId();
@@ -376,16 +397,26 @@ export function MobileServicesList({
 
   return (
     <div className="border-b border-border">
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={listId}
-        onClick={() => setOpen((o) => !o)}
-        className={`${className} flex w-full items-center justify-between`}
-      >
-        Services
-        <Chevron open={open} />
-      </button>
+      <div className="flex items-center justify-between">
+        <Link
+          href="/services"
+          aria-current={active ? "page" : undefined}
+          onClick={onNavigate}
+          className={`${className} flex-1`}
+        >
+          Services
+        </Link>
+        <button
+          type="button"
+          aria-label={open ? "Hide all services" : "Show all services"}
+          aria-expanded={open}
+          aria-controls={listId}
+          onClick={() => setOpen((o) => !o)}
+          className="flex size-11 items-center justify-center rounded-xl text-ink-dim"
+        >
+          <Chevron open={open} />
+        </button>
+      </div>
       {open && (
         <ul id={listId} className="flex flex-col pb-3">
           {SERVICES.map((service) => (
