@@ -15,8 +15,8 @@ export type ServiceItem = {
   /** Transparent 3D illustration for this service's card on the Services
    *  page, drawn straight onto the card's gradient. */
   cardImage: string;
-  /** This service's own page, once it has one. Links to the service go here;
-   *  without one they open its tab on the landing page. */
+  /** This service's own page. Links to the service go here; a service
+   *  without one would open its tab on the landing page instead. */
   page?: string;
 };
 
@@ -37,6 +37,7 @@ export const SERVICES: ServiceItem[] = [
   },
   {
     slug: "mobile-apps",
+    page: "/services/mobile-apps",
     cardImage: "/services/mobile_service.png",
     title: "Mobile App Development",
     shortTitle: "Mobile App Development",
@@ -50,6 +51,7 @@ export const SERVICES: ServiceItem[] = [
   },
   {
     slug: "ecommerce",
+    page: "/services/ecommerce",
     cardImage: "/services/ecommerce_service_clean.png",
     title: "E-commerce Development",
     shortTitle: "E-commerce",
@@ -63,6 +65,7 @@ export const SERVICES: ServiceItem[] = [
   },
   {
     slug: "branding",
+    page: "/services/branding",
     cardImage: "/services/branding_service.png",
     title: "Branding",
     shortTitle: "Branding",
@@ -76,6 +79,7 @@ export const SERVICES: ServiceItem[] = [
   },
   {
     slug: "seo",
+    page: "/services/seo",
     cardImage: "/services/seo-service.png",
     title: "SEO",
     shortTitle: "SEO",
@@ -89,6 +93,7 @@ export const SERVICES: ServiceItem[] = [
   },
   {
     slug: "social-media",
+    page: "/services/social-media",
     cardImage: "/services/social_service_clean.png",
     title: "Social Media Management",
     shortTitle: "Social Media",

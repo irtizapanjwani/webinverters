@@ -8,37 +8,24 @@ import {
   useSpring,
 } from "framer-motion";
 import { useRef, useState } from "react";
-
-const STEPS = [
-  {
-    title: "Discover",
-    body: "We align on goals, study your audience and competitors, and audit what you have — research that shapes the sitemap, content and standards.",
-  },
-  {
-    title: "Design",
-    body: "We turn strategy into layouts, components and responsive designs, with interactive prototypes so the decisions that matter are made before anything is built.",
-  },
-  {
-    title: "Development",
-    body: "We build on a clean, well-structured codebase or CMS, with accessibility, performance and analytics handled from the first line — not bolted on at the end.",
-  },
-  {
-    title: "Launch",
-    body: "We run full QA, set up redirects and tracking, hand over clearly, then plan the first improvements so the site keeps earning its place after go-live.",
-  },
-];
-
-/** Where each step's dot sits along the line, as a fraction of its length. */
-const DOT_AT = STEPS.map((_, i) => (i + 0.5) / STEPS.length);
+import { WEB_STEPS, type ProcessStep } from "./servicePages";
 
 /**
- * "Our Web Design Process" on the Web Design page: four large outlined circles
+ * "Our <Service> Process" on each service page: four large outlined circles
  * strung on one line. As the section scrolls through the screen, a Signal Blue
  * fill runs along the line from the first circle to the last, and each step's
  * dot lights up as the fill reaches it. Below 1280px (tablets and phones) the circles stack and
  * the line runs down instead. With reduced motion, the line is shown full.
  */
-export default function WebProcess() {
+type WebProcessProps = {
+  /** The service name in the heading, e.g. "Web Design". */
+  name?: string;
+  steps?: ProcessStep[];
+};
+
+export default function WebProcess({ name = "Web Design", steps = WEB_STEPS }: WebProcessProps) {
+  // Where each step's dot sits along the line, as a fraction of its length.
+  const dotAt = steps.map((_, i) => (i + 0.5) / steps.length);
   const trackRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -46,14 +33,14 @@ export default function WebProcess() {
     offset: ["start 0.75", "end 0.55"],
   });
   const fill = useSpring(scrollYProgress, { stiffness: 90, damping: 26, mass: 0.4 });
-  const [reached, setReached] = useState(reduce ? STEPS.length : 0);
+  const [reached, setReached] = useState(reduce ? steps.length : 0);
 
   useMotionValueEvent(fill, "change", (v) => {
-    const count = DOT_AT.filter((at) => v >= at - 0.01).length;
+    const count = dotAt.filter((at) => v >= at - 0.01).length;
     setReached((prev) => (prev === count ? prev : count));
   });
 
-  const shown = reduce ? STEPS.length : reached;
+  const shown = reduce ? steps.length : reached;
 
   return (
     <section
@@ -69,7 +56,7 @@ export default function WebProcess() {
           id="web-process-heading"
           className="mb-6 font-display text-[clamp(28px,4vw,56px)] leading-[1.08] font-extrabold tracking-[-0.03em]"
         >
-          Our <span className="text-[#8FB2FF]">Web Design</span> Process
+          Our <span className="text-[#8FB2FF]">{name}</span> Process
         </h2>
         <p className="mx-auto max-w-[600px] text-[17px] leading-[1.65] text-white/75">
           A structured process shaped by insights, analytics and research —
@@ -103,7 +90,7 @@ export default function WebProcess() {
           </div>
 
           <ol className="relative grid justify-items-center gap-10 xl:grid-cols-4 xl:gap-0">
-            {STEPS.map((step, i) => {
+            {steps.map((step, i) => {
               const lit = i < shown;
               return (
                 <li

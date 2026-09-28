@@ -4,56 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useId, useRef, useState } from "react";
 import { SERVICES } from "./serviceData";
-
-/** The kinds of website work, shown as tabs along the foot of the showcase.
- *  `lead` and `rest` form the two-tone headline. */
-const TABS = [
-  {
-    label: "Custom Web Design",
-    lead: "Custom",
-    rest: "Website Design",
-    body: "A custom website should feel unmistakably connected to the business behind it, not the template beneath it. We start with your brand, audience and the commercial role of the site, then define the architecture, content, visual system and functionality around those needs — and choose the platform once the strategy is clear.",
-  },
-  {
-    label: "Redesign",
-    lead: "Website",
-    rest: "Redesign",
-    body: "When a site no longer reflects the business, we redesign it around what already works. We audit content, traffic and conversions first, keep what earns its place, and rebuild the rest — with redirects and SEO protected so nothing you have built is lost in the move.",
-  },
-  {
-    label: "Responsive Web Design",
-    lead: "Responsive",
-    rest: "Web Design",
-    body: "Most visitors arrive on a phone. We design every layout to adapt from the smallest screen to the widest desktop, so navigation, content and calls to action stay clear, fast and easy to use wherever someone meets your brand.",
-  },
-  {
-    label: "Accessible Web Design",
-    lead: "Accessible",
-    rest: "Web Design",
-    body: "An accessible website works for everyone. We design and build to WCAG guidelines — contrast, keyboard navigation, screen-reader structure and readable content — so more people can use your site, and it stands on firmer legal ground.",
-  },
-  {
-    label: "Small Business Websites",
-    lead: "Small Business",
-    rest: "Websites",
-    body: "A small business site has to work hard from day one. We build focused, professional websites that explain what you do, earn trust quickly and turn visitors into enquiries — without the cost or complexity of an enterprise build.",
-  },
-  {
-    label: "B2B",
-    lead: "B2B",
-    rest: "Website Design",
-    body: "B2B buyers research carefully and involve several decision-makers. We design sites that make complex offerings easy to understand, support each stage of a long sales cycle, and give your sales team pages worth sending.",
-  },
-  {
-    label: "UX-Led",
-    lead: "UX-Led",
-    rest: "Website Design",
-    body: "We start from how people actually use a site. Research, user journeys and testing shape the structure before any visual design, so the finished website is intuitive to navigate and guides visitors toward the actions that matter.",
-  },
-];
-
-/** Related services: every service except this page's own and e-commerce. */
-const RELATED = SERVICES.filter((s) => s.slug !== "web-design" && s.slug !== "ecommerce");
+import { WEB_TABS, type ShowcaseTab } from "./servicePages";
 
 function ArrowUpRight({ className = "size-4" }: { className?: string }) {
   return (
@@ -72,7 +23,28 @@ function ArrowUpRight({ className = "size-4" }: { className?: string }) {
  * The tabs follow the ARIA tabs pattern: arrow keys, Home and End move between
  * them, and the text panel is labelled by the selected tab.
  */
-export default function WebServiceTabs() {
+type WebServiceTabsProps = {
+  tabs?: ShowcaseTab[];
+  /** The service picture on the right of the card. */
+  image?: string;
+  /** What the showcase and its tabs are about, for screen readers. */
+  label?: string;
+  tabsLabel?: string;
+  /** Services not to list as related (this page's own is always left out). */
+  slug?: string;
+  exclude?: string[];
+};
+
+export default function WebServiceTabs({
+  tabs = WEB_TABS,
+  image = "/services-landing-page/web-design.jpg",
+  label = "Website design services",
+  tabsLabel = "Kinds of website",
+  slug = "web-design",
+  exclude = ["ecommerce"],
+}: WebServiceTabsProps) {
+  const TABS = tabs;
+  const related = SERVICES.filter((s) => s.slug !== slug && !exclude.includes(s.slug));
   const [active, setActive] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const baseId = useId();
@@ -96,7 +68,7 @@ export default function WebServiceTabs() {
       {/* ---------- Showcase card ---------- */}
       <section
         data-surface="dark"
-        aria-label="Website design services"
+        aria-label={label}
         className="relative overflow-hidden rounded-[28px] bg-[#0B1330] text-white"
       >
         {/* The picture fills the right of the card. Its white backdrop is
@@ -104,7 +76,7 @@ export default function WebServiceTabs() {
             it from the left so the text always sits on dark. */}
         <div aria-hidden="true" className="absolute inset-y-0 right-0 w-full lg:w-[68%]">
           <Image
-            src="/services-landing-page/web-design.jpg"
+            src={image}
             alt=""
             fill
             sizes="(min-width: 1024px) 60vw, 100vw"
@@ -142,7 +114,7 @@ export default function WebServiceTabs() {
           {/* The tab bar along the foot of the card */}
           <div
             role="tablist"
-            aria-label="Kinds of website"
+            aria-label={tabsLabel}
             onKeyDown={onKeyDown}
             className="flex gap-1.5 overflow-x-auto rounded-full border border-white/15 bg-[#0B1330]/75 p-1.5 backdrop-blur-md [scrollbar-width:none]"
           >
@@ -186,7 +158,7 @@ export default function WebServiceTabs() {
         </p>
         <div className="flex flex-wrap items-center gap-3 lg:gap-4">
           <ul className="flex flex-wrap gap-3">
-            {RELATED.map((service) => (
+            {related.map((service) => (
               <li key={service.slug}>
                 <Link
                   href={service.page ?? `/#service-${service.slug}`}

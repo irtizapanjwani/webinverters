@@ -1,19 +1,33 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import Nav from "../../components/Nav";
 import Footer from "../../components/Footer";
 import ContactSection from "../../components/ContactSection";
 import PlatformsCard from "../../components/PlatformsCard";
 import WebProcess from "../../components/WebProcess";
 import WebServiceTabs from "../../components/WebServiceTabs";
+import WhyUs from "../../components/WhyUs";
+import ServiceIcon from "../../components/ServiceIcon";
+import { SERVICES } from "../../components/serviceData";
 import { SERVICE_SHADES } from "../../components/serviceShades";
+import { SERVICE_PAGES, getServicePage } from "../../components/servicePages";
 
-export const metadata: Metadata = {
-  title: "Web Design & Development — Web Inventers",
-  description:
-    "Web Inventers designs and engineers custom websites that make a stronger case for the businesses behind them — strategy, UX, design, development, SEO and accessibility in one team.",
-};
+/* One page per service, all on the same layout — the content comes from
+   components/servicePages.ts. Only the six services listed there exist;
+   any other address under /services/ is a 404. */
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return SERVICE_PAGES.map((p) => ({ service: p.slug }));
+}
+
+export async function generateMetadata({ params }: PageProps<"/services/[service]">): Promise<Metadata> {
+  const page = getServicePage((await params).service);
+  return page ? page.meta : {};
+}
 
 function GridIcon() {
   return (
@@ -34,19 +48,11 @@ function ChevronRight() {
   );
 }
 
-/** The Web Design & Development card's icon: a browser window with code. */
-function WebIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="size-8">
-      <rect x="3" y="4" width="18" height="16" rx="2" />
-      <path d="M3 8h18" />
-      <path d="m10 12-2 2 2 2" />
-      <path d="m14 12 2 2-2 2" />
-    </svg>
-  );
-}
+export default async function ServicePage({ params }: PageProps<"/services/[service]">) {
+  const page = getServicePage((await params).service);
+  if (!page) notFound();
+  const iconIndex = SERVICES.findIndex((s) => s.slug === page.slug);
 
-export default function WebDesignPage() {
   return (
     <div className="relative w-full bg-bg">
       <Nav />
@@ -61,7 +67,7 @@ export default function WebDesignPage() {
         <div className="relative -mt-[73px] bg-[radial-gradient(60%_70%_at_85%_10%,rgba(27,90,240,0.28),transparent_70%),radial-gradient(50%_60%_at_5%_90%,rgba(14,116,144,0.22),transparent_70%),linear-gradient(180deg,#05070C_0%,#0B1330_100%)] px-3 pt-[85px] pb-3 sm:px-5 sm:pb-5 xl:-mt-[77px] xl:pt-[89px]">
           <section
             data-surface="dark"
-            aria-labelledby="web-design-heading"
+            aria-labelledby="service-heading"
             className={`relative mx-auto max-w-[1880px] overflow-hidden rounded-[28px] border border-white/10 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_30px_80px_-30px_rgba(27,90,240,0.45)] ${SERVICE_SHADES[0]}`}
           >
             <div className="relative grid gap-10 p-7 sm:p-10 lg:min-h-[max(640px,calc(100svh-101px))] lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_minmax(0,0.9fr)] lg:gap-6 lg:p-12 xl:gap-10">
@@ -79,24 +85,25 @@ export default function WebDesignPage() {
                       <ChevronRight />
                     </li>
                     <li aria-current="page" className="text-white/65">
-                      Web Design Services
+                      {page.crumb}
                     </li>
                   </ol>
                 </nav>
 
                 <span className="mb-8 flex size-[68px] items-center justify-center rounded-[14px] border border-white/25 bg-white/10 backdrop-blur-sm">
-                  <WebIcon />
+                  <ServiceIcon index={iconIndex} strokeWidth={1.4} className="size-8" />
                 </span>
 
                 <h1
-                  id="web-design-heading"
+                  id="service-heading"
                   className="mb-9 font-display text-[clamp(30px,3.4vw,50px)] leading-[1.06] font-extrabold tracking-[-0.03em] [overflow-wrap:normal]"
                 >
-                  Custom Web
-                  <br />
-                  <span className="text-[#8FB2FF]">Design &amp;</span>
-                  <br />
-                  <span className="text-[#8FB2FF]">Development</span>
+                  {page.hero.lines.map((line, i) => (
+                    <span key={line.text} className={line.accent ? "text-[#8FB2FF]" : undefined}>
+                      {i > 0 && <br />}
+                      {line.text}
+                    </span>
+                  ))}
                 </h1>
 
                 <a
@@ -115,8 +122,8 @@ export default function WebDesignPage() {
                 />
                 <div className="relative aspect-[3/2] w-full max-w-[640px]">
                   <Image
-                    src="/services/website_service.png"
-                    alt="A laptop showing a custom website design, on a sculpted white stand"
+                    src={page.hero.image}
+                    alt={page.hero.imageAlt}
                     fill
                     priority
                     sizes="(min-width: 1024px) 40vw, 90vw"
@@ -128,18 +135,10 @@ export default function WebDesignPage() {
               {/* Right: the statement, and the longer explanation at the foot */}
               <div className="relative z-10 flex flex-col justify-between gap-8 lg:pt-28">
                 <p className="text-[clamp(17px,1.35vw,20px)] leading-[1.5] font-semibold">
-                  Web Inventers designs and engineers custom websites that make a
-                  stronger case for the businesses behind them.
+                  {page.hero.statement}
                 </p>
                 <p className="text-[15px] leading-[1.75] text-white/75">
-                  A website is often where a business has to make its case
-                  without anyone in the room. The message should be clear within
-                  seconds, the experience should earn trust, and the technology
-                  should support the work without getting in the way. We start
-                  with research and strategy, then turn that understanding into
-                  site architecture, content, UX, visual design, development,
-                  SEO and accessibility — built on Next.js and React, or the
-                  platform that fits you best.
+                  {page.hero.body}
                 </p>
               </div>
             </div>
@@ -155,32 +154,40 @@ export default function WebDesignPage() {
             id="web-expertise-heading"
             className="mx-auto mb-6 max-w-[1240px] font-display text-[clamp(28px,3.7vw,56px)] leading-[1.08] font-extrabold tracking-[-0.03em] text-ink"
           >
-            <span className="text-accent">Web Design &amp; Development</span>
+            <span className="text-accent">{page.expertise.name}</span>
             <br />
             Expertise
           </h2>
           <p className="mx-auto max-w-[720px] text-[16.5px] leading-[1.7] text-ink-dim">
-            Web Inventers brings strategy, UX, content, visual design, web
-            development, accessibility and search together to build websites
-            shaped around your business, your audience, and the decisions the
-            experience needs to support.
+            {page.expertise.body}
           </p>
         </section>
 
         {/* Showcase with a tab per kind of website, then related services */}
-        <WebServiceTabs />
+        <WebServiceTabs
+          slug={page.slug}
+          image={page.showcase.image}
+          label={page.showcase.label}
+          tabsLabel={page.showcase.tabsLabel}
+          tabs={page.showcase.tabs}
+          exclude={page.showcase.exclude ?? []}
+        />
 
-        {/* The platforms we build on — the Services page card, full width */}
+        {/* The platforms or tools this service is built with, full width */}
         <div className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-6 lg:px-8 lg:pt-10">
-          <PlatformsCard size="large" />
+          <PlatformsCard size="large" lead={page.platforms.lead} rest={page.platforms.rest} items={page.platforms.items} />
         </div>
 
-        {/* Our Web Design Process — four steps on a line that fills as you scroll */}
-        <WebProcess />
+        {/* Our <Service> Process — four steps on a line that fills as you scroll */}
+        <WebProcess name={page.process.name} steps={page.process.steps} />
+
+        {/* The landing page's "Why Web Inventers" section — video testimonials,
+            trust cards and the awards carousel */}
+        <WhyUs />
 
         {/* The Contact page's "Start the Conversation" form, above the footer on
             every page */}
-        <ContactSection as="h2" className="pt-16 pb-20 lg:pt-24 lg:pb-24" />
+        <ContactSection as="h2" className="pt-12 pb-20 lg:pt-16 lg:pb-24" />
       </main>
 
       {/* Carries the "Let's build, something awesome!" scroller beneath it */}
