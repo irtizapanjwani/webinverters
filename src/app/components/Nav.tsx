@@ -5,11 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "./Button";
+import ServicesMenu, { MobileServicesList } from "./ServicesMenu";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About Us" },
-  { href: "#services", label: "Services" },
+  // Opens the services dropdown rather than linking anywhere itself.
+  { href: "#services", label: "Services", menu: true },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
@@ -28,12 +30,15 @@ type NavProps = {
 export default function Nav({ onLight = false }: NavProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  /** The Services mega menu is open: its white panel sits behind the navbar. */
+  const [servicesOpen, setServicesOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
 
   /** Text/logo contrast mode: dark ink when on a light surface. */
-  const darkText = onLight || scrolled;
+  const darkText = onLight || scrolled || servicesOpen;
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
@@ -91,6 +96,7 @@ export default function Nav({ onLight = false }: NavProps) {
 
   return (
     <header
+      ref={headerRef}
       className={`sticky z-100 w-full border-b transition-[background-color,border-color,border-radius,top] duration-300 ${
         scrolled
           ? "top-4 border-gray-400 bg-white/50 backdrop-blur-xl py-4 rounded-full mx-auto max-w-[calc(100vw-32px)] lg:max-w-[980px] overflow-hidden"
@@ -152,6 +158,17 @@ export default function Nav({ onLight = false }: NavProps) {
 
             const isRoute = link.href.startsWith("/");
 
+            if (link.menu) {
+              return (
+                <ServicesMenu
+                  key={link.label}
+                  className={linkClass}
+                  headerRef={headerRef}
+                  onOpenChange={setServicesOpen}
+                />
+              );
+            }
+
             return isRoute ? (
               <Link
                 key={link.label}
@@ -181,7 +198,7 @@ export default function Nav({ onLight = false }: NavProps) {
                 href="/portfolio"
                 variant="ghost"
                 size="sm"
-                surface={onLight ? "light" : "dark"}
+                surface={onLight || servicesOpen ? "light" : "dark"}
               >
                 View Our Work
               </Button>
@@ -247,6 +264,16 @@ export default function Nav({ onLight = false }: NavProps) {
               const isActive =
                 link.href.startsWith("/") && pathname === link.href;
               const isRoute = link.href.startsWith("/");
+
+              if (link.menu) {
+                return (
+                  <MobileServicesList
+                    key={link.label}
+                    onNavigate={closeMenu}
+                    className="px-2 py-4 text-xl font-semibold text-ink-dim"
+                  />
+                );
+              }
 
               return isRoute ? (
                 <Link

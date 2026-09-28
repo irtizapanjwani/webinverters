@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { SERVICES } from "./serviceData";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -12,6 +12,21 @@ export default function ServicesShowcase() {
   const reduce = useReducedMotion();
   const baseId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // Deep links from the navbar's Services menu: /#service-<slug> selects that
+  // tab — on arrival from another page, and when the link is clicked while
+  // already on this page. Scrolling is left to the anchors in Services.
+  useEffect(() => {
+    const openFromHash = () => {
+      const match = window.location.hash.match(/^#service-(.+)$/);
+      if (!match) return;
+      const index = SERVICES.findIndex((s) => s.slug === match[1]);
+      if (index >= 0) setActive(index);
+    };
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
+    return () => window.removeEventListener("hashchange", openFromHash);
+  }, []);
 
   const tabId = (i: number) => `${baseId}-service-tab-${i}`;
   const panelId = (i: number) => `${baseId}-service-panel-${i}`;
