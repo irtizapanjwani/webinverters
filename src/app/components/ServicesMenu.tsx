@@ -12,7 +12,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { createPortal } from "react-dom";
-import { SERVICES } from "./serviceData";
+import { SERVICES, type ServiceItem } from "./serviceData";
 import { SERVICE_SHADES } from "./serviceShades";
 import { SOCIALS } from "./socials";
 
@@ -62,7 +62,8 @@ function Chevron({ open }: { open: boolean }) {
   );
 }
 
-/** Link to one service on the landing page. From any other page it navigates
+/** Link to one service: its own page when it has one, otherwise its tab on
+ *  the landing page. For the landing-page tab: from any other page it navigates
  *  there, and the browser scrolls to the service's anchor at the top of the
  *  services section while the section reads the hash to pick the tab. On the
  *  landing page itself the click updates the hash, glides to the anchor, and
@@ -70,10 +71,11 @@ function Chevron({ open }: { open: boolean }) {
 function useServiceLink() {
   const pathname = usePathname();
   return useCallback(
-    (slug: string) => ({
-      href: `/#service-${slug}`,
+    ({ slug, page }: ServiceItem) => ({
+      href: page ?? `/#service-${slug}`,
       onClick: (e: React.MouseEvent) => {
-        if (pathname !== "/") return;
+        // A service with its own page is a plain link.
+        if (page || pathname !== "/") return;
         e.preventDefault();
         const hash = `#service-${slug}`;
         if (window.location.hash !== hash) window.history.pushState(null, "", hash);
@@ -293,7 +295,7 @@ export default function ServicesMenu({
 
                     <div className="grid grid-cols-3 gap-x-6 gap-y-8 xl:grid-cols-6 xl:gap-5 2xl:gap-8">
                       {SERVICES.map((service, i) => {
-                        const link = serviceLink(service.slug);
+                        const link = serviceLink(service);
                         const go = (e: React.MouseEvent) => {
                           link.onClick(e);
                           close();
@@ -406,9 +408,9 @@ export function MobileServicesList({
           {SERVICES.map((service) => (
             <li key={service.slug}>
               <Link
-                {...serviceLink(service.slug)}
+                {...serviceLink(service)}
                 onClick={(e) => {
-                  serviceLink(service.slug).onClick(e);
+                  serviceLink(service).onClick(e);
                   onNavigate();
                 }}
                 className="flex items-center justify-between px-4 py-2.5 text-base font-medium text-ink-dim hover:text-accent"

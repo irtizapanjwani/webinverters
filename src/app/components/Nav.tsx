@@ -17,6 +17,13 @@ const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
+/** A route link is current on its own page and on the pages beneath it — so
+ *  Services stays underlined on /services/web-design. Home only matches itself. */
+function isCurrent(href: string, pathname: string) {
+  if (!href.startsWith("/")) return false;
+  return pathname === href || (href !== "/" && pathname.startsWith(href + "/"));
+}
+
 const FOCUSABLE =
   'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])';
 
@@ -141,7 +148,7 @@ export default function Nav({ onLight = false }: NavProps) {
           {NAV_LINKS.map((link) => {
             // Route links are active when the path matches their href.
             const isActive =
-              link.href.startsWith("/") && pathname === link.href;
+              isCurrent(link.href, pathname);
 
             // px-3 below xl keeps six links on one line on small laptops.
             const linkClass = `relative rounded-full px-3 py-2.5 text-[14.5px] font-semibold transition-colors xl:px-4 ${
@@ -268,7 +275,7 @@ export default function Nav({ onLight = false }: NavProps) {
           <nav className="flex flex-col items-stretch gap-1" aria-label="Mobile">
             {NAV_LINKS.map((link) => {
               const isActive =
-                link.href.startsWith("/") && pathname === link.href;
+                isCurrent(link.href, pathname);
               const isRoute = link.href.startsWith("/");
 
               if (link.menu) {

@@ -15,11 +15,15 @@ export type ServiceItem = {
   /** Transparent 3D illustration for this service's card on the Services
    *  page, drawn straight onto the card's gradient. */
   cardImage: string;
+  /** This service's own page, once it has one. Links to the service go here;
+   *  without one they open its tab on the landing page. */
+  page?: string;
 };
 
 export const SERVICES: ServiceItem[] = [
   {
     slug: "web-design",
+    page: "/services/web-design",
     cardImage: "/services/website_service.png",
     title: "Web Design & Development",
     shortTitle: "Web Design & Development",
