@@ -12,11 +12,15 @@ export type ServiceItem = {
   image: string;
   imageAlt: string;
   imageFit?: "cover" | "contain";
+  /** Transparent 3D illustration for this service's card on the Services
+   *  page, drawn straight onto the card's gradient. */
+  cardImage: string;
 };
 
 export const SERVICES: ServiceItem[] = [
   {
     slug: "web-design",
+    cardImage: "/services/website_service.png",
     title: "Web Design & Development",
     shortTitle: "Web Design & Development",
     menuTitle: "Web Design",
@@ -29,6 +33,7 @@ export const SERVICES: ServiceItem[] = [
   },
   {
     slug: "mobile-apps",
+    cardImage: "/services/mobile_service.png",
     title: "Mobile App Development",
     shortTitle: "Mobile App Development",
     menuTitle: "Mobile Apps",
@@ -41,6 +46,7 @@ export const SERVICES: ServiceItem[] = [
   },
   {
     slug: "ecommerce",
+    cardImage: "/services/ecommerce_service_clean.png",
     title: "E-commerce Development",
     shortTitle: "E-commerce",
     menuTitle: "E‑commerce",
@@ -53,6 +59,7 @@ export const SERVICES: ServiceItem[] = [
   },
   {
     slug: "branding",
+    cardImage: "/services/branding_service.png",
     title: "Branding",
     shortTitle: "Branding",
     menuTitle: "Branding",
@@ -65,6 +72,7 @@ export const SERVICES: ServiceItem[] = [
   },
   {
     slug: "seo",
+    cardImage: "/services/seo-service.png",
     title: "SEO",
     shortTitle: "SEO",
     menuTitle: "SEO",
@@ -77,6 +85,7 @@ export const SERVICES: ServiceItem[] = [
   },
   {
     slug: "social-media",
+    cardImage: "/services/social_service_clean.png",
     title: "Social Media Management",
     shortTitle: "Social Media",
     menuTitle: "Social Media",

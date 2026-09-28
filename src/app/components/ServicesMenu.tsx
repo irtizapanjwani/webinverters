@@ -13,6 +13,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { SERVICES } from "./serviceData";
+import { SERVICE_SHADES } from "./serviceShades";
 import { SOCIALS } from "./socials";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -25,23 +26,6 @@ const noop = () => () => {};
 function useIsClient() {
   return useSyncExternalStore(noop, () => true, () => false);
 }
-
-/** One gradient per service card, in SERVICES order: soft blurred light
- *  streaks over a base colour, each card in its own colour family. */
-const CARD_SHADES = [
-  // Web Design & Development — navy with a warm orange streak
-  "bg-[radial-gradient(45%_160%_at_62%_40%,rgba(234,88,12,0.95),transparent_65%),radial-gradient(40%_120%_at_100%_100%,rgba(220,38,38,0.85),transparent_70%),linear-gradient(115deg,#0B1330_0%,#1F2A48_42%,#7C2D12_100%)]",
-  // Mobile App Development — steel blue
-  "bg-[radial-gradient(80%_140%_at_20%_0%,rgba(147,197,253,0.35),transparent_60%),linear-gradient(135deg,#2B5A8C,#3D6E9E_55%,#34507A)]",
-  // E-commerce Development — olive green
-  "bg-[radial-gradient(60%_140%_at_85%_50%,rgba(205,214,170,0.75),transparent_65%),radial-gradient(50%_120%_at_20%_100%,rgba(52,68,26,0.9),transparent_70%),linear-gradient(135deg,#55633A,#7C8A5A)]",
-  // Branding — navy into violet and rose
-  "bg-[radial-gradient(55%_150%_at_55%_60%,rgba(124,58,237,0.75),transparent_65%),radial-gradient(45%_130%_at_100%_20%,rgba(190,24,93,0.7),transparent_65%),radial-gradient(45%_130%_at_15%_100%,rgba(37,99,235,0.8),transparent_65%),linear-gradient(120deg,#0B1330,#1E1B4B)]",
-  // SEO — electric blue
-  "bg-[radial-gradient(60%_150%_at_80%_20%,rgba(59,130,246,0.95),transparent_62%),radial-gradient(50%_130%_at_10%_100%,rgba(6,182,212,0.6),transparent_65%),linear-gradient(135deg,#0B1330,#0F1D4A)]",
-  // Social Media Management — near black with a deep red glow
-  "bg-[radial-gradient(45%_140%_at_75%_40%,rgba(153,27,27,0.75),transparent_65%),linear-gradient(135deg,#050505,#1A0F0F)]",
-];
 
 function ArrowUpRight({ className = "size-4" }: { className?: string }) {
   return (
@@ -319,7 +303,7 @@ export default function ServicesMenu({
                             <Link
                               href={link.href}
                               onClick={go}
-                              className={`group relative flex h-[92px] items-center justify-between gap-3 overflow-hidden rounded-[12px] px-4 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] 2xl:px-5 ${CARD_SHADES[i % CARD_SHADES.length]}`}
+                              className={`group relative flex h-[92px] items-center justify-between gap-3 overflow-hidden rounded-[12px] px-4 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] 2xl:px-5 ${SERVICE_SHADES[i % SERVICE_SHADES.length]}`}
                             >
                               <span
                                 className="min-w-0 font-display text-[clamp(13px,0.95vw,16px)] leading-[1.2] font-semibold tracking-[-0.01em] [overflow-wrap:normal]"

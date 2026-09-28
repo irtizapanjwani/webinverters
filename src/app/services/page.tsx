@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import PageHero from "../components/PageHero";
+import Capabilities from "../components/Capabilities";
 import WhyUs from "../components/WhyUs";
 import ContactSection from "../components/ContactSection";
 
@@ -26,6 +27,9 @@ export default function ServicesPage() {
           title="Services built to move your business forward"
           description="From first sketch to shipped product — every service is built to compound into business growth."
         />
+
+        {/* Our Capabilities — the service list beside a card per service */}
+        <Capabilities />
 
         {/* The landing page's "Why Web Inventers" section — video testimonials,
             trust cards and the awards carousel */}
