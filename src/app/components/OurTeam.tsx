@@ -8,7 +8,7 @@ import {
   useTransform,
 } from "framer-motion";
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "./Button";
 
 type Member = {
@@ -55,6 +55,13 @@ const SHADES = [
 
 /** Pinned track height. The animation plays over (track − one screen). */
 const TRACK_VH = 280;
+
+/** How far the card row rises (in vh) as the heading leaves the stage. */
+const ROW_LIFT_VH = 12;
+
+/** The space left between the cards and the Join banner once the stage lets
+ *  go, on desktop. */
+const BANNER_GAP_PX = 96;
 
 function Silhouette() {
   return (
@@ -193,7 +200,7 @@ export default function OurTeam() {
   const headOpacity = useTransform(smoothed, [0.04, 0.34], [1, 0]);
 
   // Cards lift into the space the heading vacates.
-  const rowLift = useTransform(smoothed, [0.04, 0.4], [0, -12]);
+  const rowLift = useTransform(smoothed, [0.04, 0.4], [0, -ROW_LIFT_VH]);
   const rowY = useMotionTemplate`${rowLift}vh`;
 
   // The row reads left to right: it opens with the first card at the left
@@ -203,6 +210,44 @@ export default function OurTeam() {
   // and holds for any number of cards.
   const travelled = useTransform(smoothed, [0.06, 1], [0, 1]);
   const rowX = useMotionTemplate`calc(${travelled} * (100vw - 100%))`;
+
+  // The stage centres its content in the screen, so when it lets go the
+  // bottom of the screen is still empty under the cards — how much depends on
+  // the screen's height and the cards' size. Measure it and pull the banner up
+  // into it, leaving BANNER_GAP_PX. Only while the pinned stage is showing
+  // (desktop, motion on); otherwise the static row has no such space.
+  const stageRef = useRef<HTMLDivElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [bannerPull, setBannerPull] = useState(0);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    const row = rowRef.current;
+    if (!stage || !row) return;
+    const pinned = window.matchMedia(
+      "(min-width: 1024px) and (prefers-reduced-motion: no-preference)"
+    );
+    const measure = () => {
+      if (!pinned.matches) {
+        setBannerPull(0);
+        return;
+      }
+      // Layout position (transforms ignored), then the lift the row ends on.
+      const rowBottom = row.offsetTop + row.offsetHeight;
+      const lift = (stage.clientHeight * ROW_LIFT_VH) / 100;
+      const empty = stage.clientHeight - rowBottom + lift;
+      setBannerPull(Math.max(0, Math.round(empty - BANNER_GAP_PX)));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    observer.observe(row);
+    pinned.addEventListener("change", measure);
+    return () => {
+      observer.disconnect();
+      pinned.removeEventListener("change", measure);
+    };
+  }, []);
 
   return (
     /* A small lead-in only: the stage centres its content in the screen,
@@ -214,7 +259,7 @@ export default function OurTeam() {
         className="relative hidden lg:block motion-reduce:lg:hidden"
         style={{ height: `${TRACK_VH}vh` }}
       >
-        <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
+        <div ref={stageRef} className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
           <motion.div
             className="mx-auto mb-16 w-full max-w-[860px] px-8 text-center"
             style={{ y: headY, opacity: headOpacity }}
@@ -223,6 +268,7 @@ export default function OurTeam() {
           </motion.div>
 
           <motion.div
+            ref={rowRef}
             className="flex w-max gap-6 px-8"
             style={{ x: rowX, y: rowY }}
           >
@@ -235,7 +281,7 @@ export default function OurTeam() {
 
       {/* Phones, tablets, and reduced motion: heading in place, and a row
           the visitor swipes sideways instead of scroll-driven travel. */}
-      <div className="py-20 lg:hidden motion-reduce:lg:block motion-reduce:lg:py-28">
+      <div className="pt-20 pb-12 lg:hidden motion-reduce:lg:block motion-reduce:lg:pt-28 motion-reduce:lg:pb-14">
         <div className="mx-auto max-w-[860px] px-5 text-center sm:px-8">
           <TeamHeading />
         </div>
@@ -246,7 +292,10 @@ export default function OurTeam() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1400px] px-5 pb-20 sm:px-8 lg:pb-28">
+      <div
+        className="relative mx-auto w-full max-w-[1400px] px-5 pb-6 sm:px-8 lg:pb-10"
+        style={bannerPull ? { marginTop: -bannerPull } : undefined}
+      >
         <JoinTeamBanner />
       </div>
     </section>

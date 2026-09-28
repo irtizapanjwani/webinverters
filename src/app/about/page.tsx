@@ -30,9 +30,6 @@ export default function AboutPage() {
           description="Web Inventers is a full-service digital agency engineering websites, apps, and brands that move businesses forward."
         />
 
-        {/* Our Team — heading rises away, portrait row travels sideways */}
-        <OurTeam />
-
         {/* Who We Are / Our Vision / Our Mission — pinned scroll story */}
         <AboutStory />
 
@@ -46,6 +43,9 @@ export default function AboutPage() {
             { src: "/about/video-3-web.mp4", poster: "/about/video-3-poster.jpg" },
           ]}
         />
+
+        {/* Our Team — heading rises away, portrait row travels sideways */}
+        <OurTeam />
 
         {/* Frequently Asked Questions, from public/faqs.txt */}
         <FAQ />

@@ -132,7 +132,7 @@ export default function FAQ() {
   const columns = toColumns(FAQ_CATEGORIES[category].items);
 
   return (
-    <section className="bg-bg py-20 lg:py-28">
+    <section className="bg-bg pt-8 pb-20 lg:pt-14 lg:pb-28">
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         {/* Heading left; contact prompt right, as in the reference */}
         <div className="mb-12 flex flex-col gap-8 lg:mb-14 lg:flex-row lg:items-start lg:justify-between">
