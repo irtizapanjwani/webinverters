@@ -43,21 +43,12 @@ type Panel =
   | { kind: "numbered"; title: string; body: string; photo: number };
 
 /** The text panels on the right, in scroll order. `photo` is the index into
- *  PHOTOS shown beside the panel. There are four panels and three photos, so
- *  the intro and Who We Are share about1: it holds still while the text moves,
- *  then lifts away as Our Vision arrives.
+ *  PHOTOS shown beside the panel — one photo per panel, so each slide of the
+ *  text lifts the covering photo away.
  *
  *  Body copy is a first draft built from lines the site already uses. Replace
  *  it with Web Inventers' own words. */
 const PANELS: Panel[] = [
-  {
-    kind: "intro",
-    eyebrow: "Why Web Inventers",
-    title: "A Considered Approach",
-    accent: "From Strategy to Launch",
-    body: "Every project follows the same disciplined path — understand the problem, set a clear direction, design with purpose, then build it properly — so the thinking done at the start still shows in what goes live.",
-    photo: 0,
-  },
   {
     kind: "numbered",
     title: "Who We Are",
