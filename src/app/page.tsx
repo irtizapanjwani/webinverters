@@ -36,8 +36,6 @@ export default function Home() {
           {SHOW_TRUST_RESULTS && <Stats />}
         </div>
         <Services />
-        {/* "Have a Project in Mind?" call to action, straight after the services */}
-        <FinalCTA />
         <WhyUs />
         <FeaturedWork />
         <Process />
@@ -52,6 +50,8 @@ export default function Home() {
         <div id="faq" className="scroll-mt-20">
           <FAQ />
         </div>
+        {/* "Have a Project in Mind?" call to action, after the FAQ */}
+        <FinalCTA />
         {/* The Contact page's "Start the Conversation" form, above the footer on
             every page */}
         <ContactSection as="h2" className="pb-20 lg:pb-24" />

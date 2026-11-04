@@ -3,7 +3,7 @@ import { SERVICES } from "./serviceData";
 
 export default function Services() {
   return (
-    <section className="relative bg-bg py-14 lg:pt-20 lg:pb-8" id="services">
+    <section className="relative bg-bg py-14 lg:pt-20 lg:pb-[100px]" id="services">
       {/* Anchors for the navbar's Services menu (/#service-<slug>). They give
           each link a real target at the top of this section, so the browser
           and the router scroll here on arrival; the showcase reads the same
