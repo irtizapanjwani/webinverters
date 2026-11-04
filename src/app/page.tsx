@@ -8,6 +8,8 @@ import WhyUs from "./components/WhyUs";
 import FeaturedWork from "./components/FeaturedWork";
 import Process from "./components/Process";
 import Testimonials from "./components/Testimonials";
+import PricingPlans from "./components/PricingPlans";
+import FAQ from "./components/FAQ";
 import FinalCTA from "./components/FinalCTA";
 import Footer from "./components/Footer";
 import ContactSection from "./components/ContactSection";
@@ -37,6 +39,17 @@ export default function Home() {
         <FeaturedWork />
         <Process />
         <Testimonials />
+        {/* The Pricing page's plans and the About page's FAQ, reused as-is:
+            proof, then price, then answers to the questions price raises,
+            right before the final call to action. The ids let the nav and
+            other links jump straight to them. */}
+        <div id="pricing" className="scroll-mt-20">
+          {/* A three-card preview per category; the full list is on /pricing */}
+          <PricingPlans limit={3} viewAllHref="/pricing" />
+        </div>
+        <div id="faq" className="scroll-mt-20">
+          <FAQ />
+        </div>
         <FinalCTA />
         {/* The Contact page's "Start the Conversation" form, above the footer on
             every page */}

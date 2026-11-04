@@ -15,7 +15,7 @@ export default function FinalCTA() {
             aria-hidden="true"
           />
           <h2 className="relative mb-4.5 font-display text-[clamp(22px,4vw,39px)] font-bold tracking-[-0.02em] text-white">
-            Have a Project in Mind?
+            Have a Project in <span className="text-[#8FB2FF]">Mind?</span>
           </h2>
           <p className="relative mx-auto mb-9 max-w-[520px] text-[17px] text-white/70">
             Tell us where you want to go — we&apos;ll help engineer the way

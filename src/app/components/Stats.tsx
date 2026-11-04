@@ -84,7 +84,7 @@ function StatsContent({ values, white }: { values: number[]; white?: boolean }) 
           Trust &amp; Results
         </span>
         <h2 className="mb-5 font-display text-[clamp(21px,3.2vw,34px)] leading-[1.1] font-semibold tracking-[-0.02em]">
-          Numbers that back up the work
+          Numbers that back up the <span className="text-accent">work</span>
         </h2>
         <p className="text-[17px] leading-[1.6] text-ink-dim">
           A snapshot of the impact we&apos;ve delivered for clients across

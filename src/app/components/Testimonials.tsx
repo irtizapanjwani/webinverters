@@ -187,7 +187,7 @@ export default function Testimonials() {
             Testimonials
           </span>
           <h2 className="font-display text-[clamp(23px,3.7vw,42px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
-            What clients say about working with us
+            What clients say about <span className="text-accent">working with us</span>
           </h2>
         </div>
       </div>

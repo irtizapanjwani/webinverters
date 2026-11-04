@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useId, useState } from "react";
-import Button from "./Button";
 import { FAQ_CATEGORIES, type Faq, type FaqBlock } from "./faqData";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -134,19 +133,10 @@ export default function FAQ() {
   return (
     <section className="bg-bg pt-8 pb-20 lg:pt-14 lg:pb-28">
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
-        {/* Heading left; contact prompt right, as in the reference */}
-        <div className="mb-12 flex flex-col gap-8 lg:mb-14 lg:flex-row lg:items-start lg:justify-between">
+        <div className="mb-12 lg:mb-14">
           <h2 className="font-display text-[clamp(24px,4vw,46px)] leading-[1.1] font-extrabold tracking-[-0.02em] text-ink">
             Frequently Asked <span className="text-accent">Questions</span>
           </h2>
-          <div className="flex flex-col items-start gap-4 lg:items-start lg:pt-2">
-            <p className="text-[16px] text-ink-dim">
-              Still have questions? Contact us to discuss.
-            </p>
-            <Button href="/contact" variant="ghost" size="sm">
-              Contact Us
-            </Button>
-          </div>
         </div>
 
         {/* One tab per section of the FAQ document */}

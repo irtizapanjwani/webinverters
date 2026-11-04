@@ -127,7 +127,7 @@ export default function FeaturedWork({ compact = false }: { compact?: boolean } 
                 Featured Work
               </span>
               <h2 className="mb-5 font-display text-[clamp(23px,3.7vw,42px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
-                Projects that moved the needle
+                Projects that moved the <span className="text-accent">needle</span>
               </h2>
               <p className="text-[17px] leading-[1.6] text-ink-dim">
                 A look at recent engagements — full case studies available on

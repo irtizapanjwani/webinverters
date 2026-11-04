@@ -5,6 +5,7 @@ import { useCallback, useId, useState } from "react";
 import Button from "./Button";
 import ConsultationModal from "./ConsultationModal";
 import PackageCard from "./PackageCard";
+import { ArrowRightIcon } from "./icons";
 import { PACKAGES_BY_CATEGORY } from "./pricingData";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -22,11 +23,20 @@ const CATEGORIES = [
 
 type Category = (typeof CATEGORIES)[number];
 
-export default function PricingPlans() {
+type PricingPlansProps = {
+  /** Show at most this many packages per category (the home page preview).
+   *  Omitted on the Pricing page, which lists every package. */
+  limit?: number;
+  /** When set, a "View All Pricing Plans" button links here below the cards. */
+  viewAllHref?: string;
+};
+
+export default function PricingPlans({ limit, viewAllHref }: PricingPlansProps = {}) {
   const baseId = useId();
   const reduce = useReducedMotion();
   const [active, setActive] = useState<Category>("Web Development");
-  const packages = PACKAGES_BY_CATEGORY[active] ?? [];
+  const allPackages = PACKAGES_BY_CATEGORY[active] ?? [];
+  const packages = limit ? allPackages.slice(0, limit) : allPackages;
   // Package whose Start Project button opened the consultation popup.
   const [consultFor, setConsultFor] = useState<string | null>(null);
   // Stable, so the dialog's open/close effect doesn't re-run on every render.
@@ -138,6 +148,15 @@ export default function PricingPlans() {
             </motion.div>
           </AnimatePresence>
         </div>
+
+        {viewAllHref && (
+          <div className="mt-16 flex justify-center lg:mt-20">
+            <Button href={viewAllHref} variant="ghost">
+              View All Pricing Plans
+              <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-0.75" />
+            </Button>
+          </div>
+        )}
       </div>
 
       <ConsultationModal packageName={consultFor} onClose={closeConsult} />

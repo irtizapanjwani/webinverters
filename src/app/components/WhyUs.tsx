@@ -286,7 +286,7 @@ export default function WhyUs({ testimonialVideos = DEFAULT_VIDEOS }: WhyUsProps
             Why Web Inventers
           </span>
           <h2 className="font-display text-[clamp(23px,3.7vw,42px)] leading-[1.06] font-extrabold tracking-[-0.02em]">
-            A technology partner, not a template shop
+            A technology partner, <span className="text-accent">not a template shop</span>
           </h2>
         </div>
 

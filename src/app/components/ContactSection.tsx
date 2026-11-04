@@ -88,7 +88,7 @@ export default function ContactSection({ as: Heading = "h1", className = "" }: C
             <Heading className="mb-6 font-display text-[clamp(24px,4.7vw,58px)] leading-[1.02] font-extrabold tracking-[-0.02em] text-white">
               Start the
               <br />
-              Conversation.
+              <span className="text-[#8FB2FF]">Conversation.</span>
             </Heading>
 
             <p className="max-w-[480px] text-[16.5px] leading-[1.65] text-white/70">
