@@ -20,7 +20,9 @@ export default function Hero() {
             grow, and stand out in the digital world.
           </p>
 
-          <div className="mb-8 flex flex-wrap gap-4">
+          {/* Lifted above the logo strip's dark fade, which climbs this far up the
+              hero and was dimming the buttons. */}
+          <div className="relative z-10 mb-8 flex flex-wrap gap-4">
             <Button href="#start-project">
               Start Project
               <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-0.75" />

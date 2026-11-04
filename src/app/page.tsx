@@ -35,22 +35,22 @@ export default function Home() {
           {SHOW_TRUST_RESULTS && <Stats />}
         </div>
         <Services />
+        {/* "Have a Project in Mind?" call to action, straight after the services */}
+        <FinalCTA />
         <WhyUs />
         <FeaturedWork />
         <Process />
-        <Testimonials />
-        {/* The Pricing page's plans and the About page's FAQ, reused as-is:
-            proof, then price, then answers to the questions price raises,
-            right before the final call to action. The ids let the nav and
-            other links jump straight to them. */}
+        {/* The Pricing page's plans (a three-card preview per category; the
+            full list is on /pricing), then testimonials, then the About
+            page's FAQ. The ids let the
+            nav and other links jump straight to them. */}
         <div id="pricing" className="scroll-mt-20">
-          {/* A three-card preview per category; the full list is on /pricing */}
           <PricingPlans limit={3} viewAllHref="/pricing" />
         </div>
+        <Testimonials />
         <div id="faq" className="scroll-mt-20">
           <FAQ />
         </div>
-        <FinalCTA />
         {/* The Contact page's "Start the Conversation" form, above the footer on
             every page */}
         <ContactSection as="h2" className="pb-20 lg:pb-24" />

@@ -23,11 +23,17 @@ export default function HeroVideo() {
     if (!layer || !root || !hero) return;
 
     const measure = () =>
+      // Floored: at browser zoom levels the bottom lands on a fraction of a
+      // pixel, and rounding up let a sliver of video show under the hero.
       setHeight(
-        hero.getBoundingClientRect().bottom - root.getBoundingClientRect().top
+        Math.floor(hero.getBoundingClientRect().bottom - root.getBoundingClientRect().top)
       );
 
     measure();
+    // Late layout shifts above the hero (fonts, the intro) move it without
+    // resizing it, which the observer below would miss.
+    window.addEventListener("load", measure);
+    document.fonts?.ready.then(measure);
 
     // The hero reflows on resize, on font load, and as the rotating headline
     // word changes width — re-measure from the element itself rather than
@@ -35,7 +41,10 @@ export default function HeroVideo() {
     const ro = new ResizeObserver(measure);
     ro.observe(hero);
     ro.observe(document.documentElement);
-    return () => ro.disconnect();
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("load", measure);
+    };
   }, []);
 
   return (

@@ -168,7 +168,7 @@ export default function ServicesShowcase() {
       className="relative lg:h-[var(--track)] motion-reduce:lg:h-auto"
       style={{ "--track": `${TRACK_VH}vh` } as React.CSSProperties}
     >
-      <div className="lg:sticky lg:top-0 lg:flex lg:h-screen lg:items-center lg:pt-20 motion-reduce:lg:static motion-reduce:lg:h-auto motion-reduce:lg:pt-0">
+      <div className="lg:sticky lg:top-24 lg:flex lg:h-[calc(100vh-6rem)] lg:items-start motion-reduce:lg:static motion-reduce:lg:h-auto">
         <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] lg:items-start lg:gap-14">
           {/* ---------- service list ---------- */}
           <div
