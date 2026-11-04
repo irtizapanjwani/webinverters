@@ -260,11 +260,13 @@ export default function AboutStory() {
         className="relative hidden lg:block motion-reduce:lg:hidden"
         style={{ height: `${TRACK_VH}vh` }}
       >
-        <div className="sticky top-0 flex h-screen items-center">
+        {/* pt-24 keeps the stage clear of the fixed navbar; the content is then
+            centred in the space below it rather than in the whole screen. */}
+        <div className="sticky top-0 flex h-screen items-center pt-24 pb-6">
           <div className="mx-auto grid w-full max-w-[1400px] grid-cols-[1.05fr_1fr] items-stretch gap-16 px-8 xl:gap-24">
             {/* Square window over a stack of photos. Each image carries its
                 own rounded frame. */}
-            <div className="relative aspect-square w-full max-w-[72vh] overflow-hidden rounded-[24px]">
+            <div className="relative aspect-square w-full max-w-[min(72vh,calc(100vh-10rem))] overflow-hidden rounded-[24px]">
               {PHOTOS.map((photo, i) => (
                 <PhotoLayer key={photo.src} index={i} progress={smoothed} />
               ))}

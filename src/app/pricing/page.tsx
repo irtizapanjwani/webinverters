@@ -6,6 +6,7 @@ import PricingPlans from "../components/PricingPlans";
 import FeaturedWork from "../components/FeaturedWork";
 import Testimonials from "../components/Testimonials";
 import ContactSection from "../components/ContactSection";
+import Locations from "../components/Locations";
 
 export const metadata: Metadata = {
   title: "Pricing — Web Inventers",
@@ -42,6 +43,9 @@ export default function PricingPage() {
         {/* The Contact page's "Start the Conversation" section — the full
             form, so visitors can reach us without leaving the page */}
         <ContactSection as="h2" className="pb-20 lg:pb-24" />
+        {/* "Collaborating With Clients Across The Globe" — the office cards,
+            above the footer on every page, as on the Contact page */}
+        <Locations />
       </main>
 
       {/* Carries the "Let's build, something awesome!" scroller beneath it */}

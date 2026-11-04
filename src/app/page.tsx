@@ -13,6 +13,7 @@ import FAQ from "./components/FAQ";
 import FinalCTA from "./components/FinalCTA";
 import Footer from "./components/Footer";
 import ContactSection from "./components/ContactSection";
+import Locations from "./components/Locations";
 
 /** Trust & Results section (and its blue orb expansion out of the hero) is
  *  hidden for now, not removed. Set to true to bring it back. */
@@ -54,6 +55,9 @@ export default function Home() {
         {/* The Contact page's "Start the Conversation" form, above the footer on
             every page */}
         <ContactSection as="h2" className="pb-20 lg:pb-24" />
+        {/* "Collaborating With Clients Across The Globe" — the office cards,
+            above the footer on every page, as on the Contact page */}
+        <Locations />
       </main>
       <Footer />
     </div>

@@ -5,6 +5,7 @@ import PageHero from "../components/PageHero";
 import Capabilities from "../components/Capabilities";
 import WhyUs from "../components/WhyUs";
 import ContactSection from "../components/ContactSection";
+import Locations from "../components/Locations";
 
 export const metadata: Metadata = {
   title: "Services — Web Inventers",
@@ -38,6 +39,9 @@ export default function ServicesPage() {
         {/* The Contact page's "Start the Conversation" form, above the footer on
             every page */}
         <ContactSection as="h2" className="pt-12 pb-20 lg:pt-16 lg:pb-24" />
+        {/* "Collaborating With Clients Across The Globe" — the office cards,
+            above the footer on every page, as on the Contact page */}
+        <Locations />
       </main>
 
       {/* Carries the "Let's build, something awesome!" scroller beneath it */}

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import Nav from "../../components/Nav";
 import Footer from "../../components/Footer";
 import ContactSection from "../../components/ContactSection";
+import Locations from "../../components/Locations";
 import PlatformsCard from "../../components/PlatformsCard";
 import WebProcess from "../../components/WebProcess";
 import WebServiceTabs from "../../components/WebServiceTabs";
@@ -188,6 +189,9 @@ export default async function ServicePage({ params }: PageProps<"/services/[serv
         {/* The Contact page's "Start the Conversation" form, above the footer on
             every page */}
         <ContactSection as="h2" className="pt-12 pb-20 lg:pt-16 lg:pb-24" />
+        {/* "Collaborating With Clients Across The Globe" — the office cards,
+            above the footer on every page, as on the Contact page */}
+        <Locations />
       </main>
 
       {/* Carries the "Let's build, something awesome!" scroller beneath it */}

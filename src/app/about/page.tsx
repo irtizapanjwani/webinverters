@@ -7,6 +7,7 @@ import OurTeam from "../components/OurTeam";
 import WhyUs from "../components/WhyUs";
 import FAQ from "../components/FAQ";
 import ContactSection from "../components/ContactSection";
+import Locations from "../components/Locations";
 
 export const metadata: Metadata = {
   title: "About — Web Inventers",
@@ -53,6 +54,9 @@ export default function AboutPage() {
         {/* The Contact page's "Start the Conversation" form, above the footer on
             every page */}
         <ContactSection as="h2" className="pb-20 lg:pb-24" />
+        {/* "Collaborating With Clients Across The Globe" — the office cards,
+            above the footer on every page, as on the Contact page */}
+        <Locations />
       </main>
 
       {/* Carries the "Let's build, something awesome!" scroller beneath it */}
