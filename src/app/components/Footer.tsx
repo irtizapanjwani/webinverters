@@ -55,19 +55,18 @@ export default function Footer() {
               Web Inventers is a full-service digital agency engineering
               websites, apps, and brands that move businesses forward.
             </p>
-            {/* Accounts are not live yet: rendered as labelled placeholders so
-                the row reads as pending rather than broken. Swap each span for
-                an <a href> once the profile URLs exist. */}
             <div className="flex gap-2.5">
               {SOCIALS.map((social) => (
-                <span
+                <a
                   key={social.label}
-                  role="img"
-                  aria-label={`${social.label} — coming soon`}
-                  className="flex size-11 items-center justify-center rounded-[10px] border border-border text-ink-faint"
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="flex size-11 items-center justify-center rounded-[10px] border border-border text-ink-faint transition-colors hover:border-accent hover:text-accent"
                 >
                   {social.icon}
-                </span>
+                </a>
               ))}
             </div>
           </div>

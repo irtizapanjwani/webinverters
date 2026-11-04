@@ -12,6 +12,10 @@ import FinalCTA from "./components/FinalCTA";
 import Footer from "./components/Footer";
 import ContactSection from "./components/ContactSection";
 
+/** Trust & Results section (and its blue orb expansion out of the hero) is
+ *  hidden for now, not removed. Set to true to bring it back. */
+const SHOW_TRUST_RESULTS = false;
+
 export default function Home() {
   return (
     <div className="relative w-full bg-bg">
@@ -26,7 +30,7 @@ export default function Home() {
             the sections below. */}
         <div className="relative overflow-hidden">
           <Hero />
-          <Stats />
+          {SHOW_TRUST_RESULTS && <Stats />}
         </div>
         <Services />
         <WhyUs />

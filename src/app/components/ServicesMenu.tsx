@@ -338,18 +338,18 @@ export default function ServicesMenu({
                           info@webinventers.com
                         </a>
                       </div>
-                      {/* Profiles are not live yet — shown as labelled
-                          placeholders, as in the footer. */}
                       <div className="flex gap-2">
                         {SOCIALS.map((social) => (
-                          <span
+                          <a
                             key={social.label}
-                            role="img"
-                            aria-label={`${social.label} — coming soon`}
-                            className="flex size-11 items-center justify-center rounded-[10px] bg-bg-alt text-ink"
+                            href={social.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={social.label}
+                            className="flex size-11 items-center justify-center rounded-[10px] bg-bg-alt text-ink transition-colors hover:text-accent"
                           >
                             {social.icon}
-                          </span>
+                          </a>
                         ))}
                       </div>
                     </div>
